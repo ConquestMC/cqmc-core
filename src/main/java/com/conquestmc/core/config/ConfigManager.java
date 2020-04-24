@@ -14,22 +14,24 @@ public class ConfigManager<T> {
     private String fileName;
     private Class clazz;
     private Gson gson;
+    private String directory;
 
     @Getter
     private T config;
 
-    public ConfigManager(String fileName, Class clazz) {
+    public ConfigManager(String directory, String fileName, Class clazz) {
+        this.directory = directory;
         this.fileName = fileName;
         this.clazz = clazz;
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).setPrettyPrinting().create();
     }
 
     public void init() {
-        File f = new File("plugins/Core");
+        File f = new File("plugins/" + directory + "Core");
         if (!f.exists()) {
             f.mkdir();
         }
-        File file = new File("plugins/Core/" + fileName);
+        File file = new File("plugins/" + directory + "/" + fileName);
         if (!file.exists()) {
             URL url = getClass().getResource("/" + fileName);
             try {
@@ -45,7 +47,7 @@ public class ConfigManager<T> {
     public void loadConfig() {
         FileReader reader = null;
         try {
-            reader = new FileReader(new File("plugins/Core/" + fileName));
+            reader = new FileReader(new File("plugins/" + directory + "/" + fileName));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -57,7 +59,7 @@ public class ConfigManager<T> {
     public void saveConfig() {
         FileWriter fw = null;
         try {
-            fw = new FileWriter("plugins/Core/" + fileName);
+            fw = new FileWriter("plugins/" + directory +"/" + fileName);
             gson.toJson(config, fw);
             fw.close();
         } catch (IOException e) {

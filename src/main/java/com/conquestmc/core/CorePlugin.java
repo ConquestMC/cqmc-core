@@ -5,7 +5,6 @@ import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.dao.PlayerDao;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -13,14 +12,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
 public class CorePlugin extends JavaPlugin {
 
-    private ConfigManager serverConfigManager = new ConfigManager("config.json", MainConfig.class);
+    private ConfigManager serverConfigManager = new ConfigManager(getDataFolder().getName(), "config.json", MainConfig.class);
 
     @Getter
     private Map<UUID, ConquestPlayer> players = Maps.newHashMap();
@@ -43,7 +41,7 @@ public class CorePlugin extends JavaPlugin {
         jdbi.installPlugin(new SqlObjectPlugin());
 
         this.playerDao = jdbi.onDemand(PlayerDao.class);
-        
+
         registerListeners();
     }
 
