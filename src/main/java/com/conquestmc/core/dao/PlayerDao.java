@@ -1,13 +1,13 @@
 package com.conquestmc.core.dao;
 
+import com.conquestmc.core.model.Rank;
 import com.conquestmc.core.model.Statistic;
 import org.jdbi.v3.sqlobject.config.RegisterFieldMapper;
 import org.jdbi.v3.sqlobject.config.RegisterFieldMappers;
 import org.jdbi.v3.sqlobject.customizer.Bind;
-import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
-import java.util.UUID;
 @RegisterFieldMappers({
         @RegisterFieldMapper(Statistic.class)
 })
@@ -26,4 +26,14 @@ public interface PlayerDao {
 
     @SqlQuery("SELECT coins FROM players WHERE uuid=:uuid")
     int getCoins(@Bind("uuid") String playerUUID);
+
+    @SqlUpdate("UPDATE players SET coins = coins + :coins WHERE uuid = :uuid")
+    void addCoins(@Bind("uuid") String playerUUID, @Bind("coins") int coinsEarned);
+
+    @SqlUpdate("INSERT INTO player (uuid, name, comp_rank, join_date) VALUES (:uuid, :name, :rank, :joinDate) " +
+            "ON DUPLICATE KEY UPDATE uuid = :uuid, name = :name")
+    void insertPlayer(@Bind("uuid") String uuid, @Bind("name")String name, @Bind("rank") String rank, @Bind("joinDate") long joinDate);
+
+    @SqlQuery("SELECT rank FROM players WHERE uuid=:uuid")
+    String getRank(@Bind("uuid") String playerUUID);
 }

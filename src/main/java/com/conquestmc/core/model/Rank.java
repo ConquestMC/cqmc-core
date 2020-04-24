@@ -1,5 +1,7 @@
 package com.conquestmc.core.model;
 
+import org.bukkit.ChatColor;
+
 public enum Rank {
     TUTORIAL_1(2499, "&7Noobie"),
     EXPERIENCE_1(9999, "&7Still Learning"),
@@ -21,5 +23,9 @@ public enum Rank {
     Rank(int conquestPoints, String prefix) {
         this.conquestPoints = conquestPoints;
         this.prefix = prefix;
+    }
+
+    public String getPrefix() {
+        return ChatColor.translateAlternateColorCodes('&', prefix);
     }
 }

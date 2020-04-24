@@ -3,6 +3,7 @@ package com.conquestmc.core;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.dao.PlayerDao;
+import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -42,11 +43,17 @@ public class CorePlugin extends JavaPlugin {
         jdbi.installPlugin(new SqlObjectPlugin());
 
         this.playerDao = jdbi.onDemand(PlayerDao.class);
+        
+        registerListeners();
     }
 
     @Override
     public void onDisable() {
 
+    }
+
+    private void registerListeners() {
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
     }
 
     public ConquestPlayer getPlayer(Player player) {
