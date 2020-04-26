@@ -27,7 +27,7 @@ public class ConfigManager<T> {
     }
 
     public void init() {
-        File f = new File("plugins/" + directory + "Core");
+        File f = new File("plugins/" + directory);
         if (!f.exists()) {
             f.mkdir();
         }

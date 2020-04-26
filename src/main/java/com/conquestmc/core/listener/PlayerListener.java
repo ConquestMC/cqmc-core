@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
 
@@ -32,11 +33,19 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        Player pl = event.getPlayer();
+        plugin.getPlayerDao().setRank(pl.getUniqueId().toString(), plugin.getPlayer(pl.getUniqueId()).getRank().name());
+    }
+
+    @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         ConquestPlayer conquestPlayer = plugin.getPlayer(player);
         Rank rank = conquestPlayer.getRank();
 
-        event.setMessage(rank.getPrefix() + " > " + ChatColor.GRAY + event.getMessage());
+        event.setFormat(rank.getPrefix() + " " + player.getName() + ChatColor.GRAY + " > "
+                + ChatColor.RESET
+                + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
     }
 }

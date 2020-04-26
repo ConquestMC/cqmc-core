@@ -1,5 +1,7 @@
 package com.conquestmc.core;
 
+import com.conquestmc.core.command.GameModeCommand;
+import com.conquestmc.core.command.RankCommand;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.dao.PlayerDao;
@@ -36,11 +38,15 @@ public class CorePlugin extends JavaPlugin {
 
         Properties props = new Properties();
         props.put("user", "root");
-        props.put("password", "password");
+        props.put("password", "t967vsTzA3");
         Jdbi jdbi = Jdbi.create("jdbc:mysql://localhost:3306/test", props);
         jdbi.installPlugin(new SqlObjectPlugin());
 
         this.playerDao = jdbi.onDemand(PlayerDao.class);
+        this.playerDao.createTables();
+
+        getCommand("gamemode").setExecutor(new GameModeCommand());
+        getCommand("setrank").setExecutor(new RankCommand(this));
 
         registerListeners();
     }
