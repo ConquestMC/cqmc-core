@@ -2,6 +2,7 @@ package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.Rank;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -39,8 +40,12 @@ public class RankCommand implements CommandExecutor {
             return true;
         }
 
-        plugin.getPlayer(target.getUniqueId()).setRank(Rank.valueOf(rank));
-        target.sendMessage(ChatColor.GREEN + "Your rank has been set to: " + ChatColor.translateAlternateColorCodes('&', Rank.valueOf(rank).getPrefix()));
+        try {
+            plugin.getPlayer(target.getUniqueId()).setRank(Rank.valueOf(rank.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage(ChatColor.RED + "Cannot find specified rank!");
+        }
+        target.sendMessage(ChatColor.GREEN + "Your rank has been set to: " + ChatColor.translateAlternateColorCodes('&', Rank.valueOf(rank).getPrefix() + WordUtils.capitalizeFully(Rank.valueOf(rank.toUpperCase()).name())));
         return true;
     }
 }

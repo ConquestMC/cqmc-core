@@ -36,7 +36,7 @@ public class GameModeCommand implements CommandExecutor {
             }
 
             player.setGameMode(mode);
-            player.sendMessage(ChatColor.GREEN + "Your game mode has been updated to: " + ChatColor.GOLD + WordUtils.capitalizeFully(mode.name()));
+            player.sendMessage(ChatColor.GREEN + "Your survivalgames mode has been updated to: " + ChatColor.GOLD + WordUtils.capitalizeFully(mode.name()));
         }
         else if (args.length == 2) {
             if (!(sender.hasPermission("core.gamemode.others"))) {
@@ -60,7 +60,7 @@ public class GameModeCommand implements CommandExecutor {
             }
 
             target.setGameMode(mode);
-            target.sendMessage(ChatColor.GREEN + "Your game mode has been updated to: " + ChatColor.GOLD + WordUtils.capitalizeFully(mode.name()));
+            target.sendMessage(ChatColor.GREEN + "Your survivalgames mode has been updated to: " + ChatColor.GOLD + WordUtils.capitalizeFully(mode.name()));
         }
         return true;
     }

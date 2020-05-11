@@ -24,9 +24,10 @@ public class PlayerListener implements Listener {
         Player pl = event.getPlayer();
         if (plugin.getPlayer(pl) == null) {
             ConquestPlayer conquestPlayer = new ConquestPlayer(pl.getUniqueId(), pl.getName());
-            plugin.getPlayerDao().insertPlayer(pl.getUniqueId().toString(), pl.getName(), Rank.TUTORIAL_1.name(), System.currentTimeMillis());
+            plugin.getPlayerDao().insertPlayer(pl.getUniqueId().toString(), pl.getName(), Rank.NONE.name(), System.currentTimeMillis());
             conquestPlayer.setCoins(plugin.getPlayerDao().getCoins(pl.getUniqueId().toString()));
             conquestPlayer.setRank(Rank.valueOf(plugin.getPlayerDao().getRank(pl.getUniqueId().toString())));
+            conquestPlayer.setScore(plugin.getPlayerDao().getConquestPoints(pl.getUniqueId().toString()));
 
             plugin.getPlayers().put(pl.getUniqueId(), conquestPlayer);
         }
@@ -44,8 +45,7 @@ public class PlayerListener implements Listener {
         ConquestPlayer conquestPlayer = plugin.getPlayer(player);
         Rank rank = conquestPlayer.getRank();
 
-        event.setFormat(rank.getPrefix() + " " + player.getName() + ChatColor.GRAY + " > "
-                + ChatColor.RESET
-                + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
+        String format = ChatColor.YELLOW + "" + conquestPlayer.getScore() + " " + rank.getPrefix() + player.getName() + ChatColor.WHITE + " : " + ChatColor.translateAlternateColorCodes('&', event.getMessage());
+        event.setFormat(format);
     }
 }

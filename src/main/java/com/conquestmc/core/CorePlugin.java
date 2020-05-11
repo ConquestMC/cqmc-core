@@ -7,12 +7,14 @@ import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.dao.PlayerDao;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.server.ServerManager;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import redis.clients.jedis.JedisPool;
 
 import java.util.Map;
 import java.util.Properties;
@@ -20,6 +22,7 @@ import java.util.UUID;
 
 public class CorePlugin extends JavaPlugin {
 
+    @Getter
     private ConfigManager serverConfigManager = new ConfigManager(getDataFolder().getName(), "config.json", MainConfig.class);
 
     @Getter
@@ -30,6 +33,12 @@ public class CorePlugin extends JavaPlugin {
 
     @Getter
     private PlayerDao playerDao;
+
+    @Getter
+    private JedisPool jedisPool;
+
+    @Getter
+    private ServerManager serverManager;
 
     @Override
     public void onEnable() {
@@ -45,8 +54,12 @@ public class CorePlugin extends JavaPlugin {
         this.playerDao = jdbi.onDemand(PlayerDao.class);
         this.playerDao.createTables();
 
+        this.jedisPool = new JedisPool();
+
         getCommand("gamemode").setExecutor(new GameModeCommand());
         getCommand("setrank").setExecutor(new RankCommand(this));
+
+        this.serverManager = new ServerManager(this);
 
         registerListeners();
     }

@@ -1,5 +1,6 @@
 package com.conquestmc.core.config;
 
+import com.conquestmc.core.server.ServerType;
 import lombok.Data;
 
 import java.util.List;
@@ -8,4 +9,6 @@ import java.util.List;
 public class MainConfig {
 
     private final List<String> bannedWords;
+    private String serverAddress;
+    private ServerType type;
 }
