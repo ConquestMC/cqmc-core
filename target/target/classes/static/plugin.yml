@@ -11,6 +11,11 @@ commands:
   setrank:
     description: "Change a players rank"
     usage: "/setrank <player> <rank>"
+  friends:
+    description: "Default friend command"
+    aliases:
+      - f
+      - friend
 permissions:
   core.gamemode:
     description: "gamemode perm"

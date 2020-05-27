@@ -45,7 +45,7 @@ public class RankCommand implements CommandExecutor {
         } catch (IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + "Cannot find specified rank!");
         }
-        target.sendMessage(ChatColor.GREEN + "Your rank has been set to: " + ChatColor.translateAlternateColorCodes('&', Rank.valueOf(rank).getPrefix() + WordUtils.capitalizeFully(Rank.valueOf(rank.toUpperCase()).name())));
+        target.sendMessage(ChatColor.GREEN + "Your rank has been set to: " + ChatColor.translateAlternateColorCodes('&', WordUtils.capitalizeFully(Rank.valueOf(rank.toUpperCase()).name())));
         return true;
     }
 }

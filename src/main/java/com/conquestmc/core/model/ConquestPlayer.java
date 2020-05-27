@@ -1,20 +1,15 @@
 package com.conquestmc.core.model;
 
-import com.conquestmc.core.CorePlugin;
+import com.conquestmc.core.friends.FriendRequest;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
+
 import com.mongodb.DBObject;
 import lombok.Data;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.mongodb.morphia.annotations.Entity;
 
-import java.beans.ConstructorProperties;
+import org.bson.Document;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,25 +31,19 @@ public class ConquestPlayer {
 
     private Set<Statistic> statistics = new HashSet<>();
 
-    public ConquestPlayer(UUID uuid, DBObject object) {
+    public ConquestPlayer(UUID uuid, Document object) {
         this.uuid = uuid;
-        this.rank = Rank.valueOf((String) object.get("rank"));
+        this.rank = Rank.valueOf(object.get("rank").toString().toUpperCase());
         this.knownName = (String) object.get("knownName");
         this.coins = (int) object.get("coins");
         this.points = (long) object.get("points");
 
-        for (DBObject friendReq : (List<DBObject>) object.get("friendRequests")) {
-            FriendRequest req = new FriendRequest(UUID.fromString((String) friendReq.get("from")), UUID.fromString((String) friendReq.get("to")));
-            req.setAccepted((Boolean) friendReq.get("accepted"));
-            this.friendRequests.add(req);
-        }
-
-        for (DBObject stat : (List<DBObject>) object.get("stats")) {
+        for (Document stat : (List<Document>) object.get("stats")) {
             Statistic statistic = new Statistic((String)stat.get("name"), (int)stat.get("value"));
             this.statistics.add(statistic);
         }
 
-        for (DBObject obj : (List<DBObject>) object.get("friends")) {
+        for (Document obj : (List<Document>) object.get("friends")) {
             UUID friend = UUID.fromString(String.valueOf(obj.get("_id")));
             this.friends.add(friend);
         }
@@ -68,35 +57,27 @@ public class ConquestPlayer {
         this.rank = Rank.NONE;
     }
 
-    public void sendFriendRequest(Player target) {
-        if (target == null) {
-            return;
-        }
-        UUID tUUID = target.getUniqueId();
-        FriendRequest request = new FriendRequest(uuid, tUUID);
+    public void sendFriendRequest(String targetName) {
+        FriendRequest request = new FriendRequest(knownName, targetName);
         this.friendRequests.add(request);
-        CorePlugin.getInstance().getPlayer(tUUID).friendRequests.add(request);
 
-        String accept =  ChatColor.GREEN + ChatColor.BOLD.toString() + "ACCEPT";
-        String beggining = ChatColor.YELLOW + getKnownName() + ChatColor.GRAY +
-                " has requested to be friends! ";
-        String decline = ChatColor.RED + ChatColor.BOLD.toString() + " DECLINE";
+        request.send();
+    }
 
-        TextComponent acceptComp = new TextComponent(accept);
-        acceptComp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/f accept"));
-
-        TextComponent declineComp = new TextComponent(decline);
-        declineComp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/f decline"));
-
-        TextComponent msg = new TextComponent(beggining);
-        msg.addExtra(acceptComp);
-        msg.addExtra(declineComp);
-        target.spigot().sendMessage(msg);
-        target.playSound(target.getLocation(), Sound.LEVEL_UP, 1, 1);
+    public void removeFriendRequest(String to) {
+        FriendRequest rem = null;
+        for (FriendRequest request : getFriendRequests()) {
+            if (request.getTo().equalsIgnoreCase(to)) {
+                rem = request;
+            }
+        }
+        if (rem != null) {
+            this.getFriendRequests().remove(rem);
+        }
     }
 
     public List<FriendRequest> getIncomingFriendRequests() {
-        return friendRequests.stream().filter(req -> req.getTo().toString().equals(uuid.toString())).collect(Collectors.toList());
+        return friendRequests.stream().filter(req -> req.getTo().equals(uuid.toString())).collect(Collectors.toList());
     }
 
     public Statistic getStatistic(String name) {
@@ -112,7 +93,7 @@ public class ConquestPlayer {
         return Bukkit.getPlayer(uuid);
     }
 
-    public DBObject getMongoObject() {
+    public Document getMongoObject() {
         List<DBObject> stats = Lists.newArrayList();
         List<DBObject> friendRequests = Lists.newArrayList();
 
@@ -123,15 +104,15 @@ public class ConquestPlayer {
 
         for (FriendRequest request : this.friendRequests) {
             DBObject object = new BasicDBObject()
-                    .append("from", request.getFrom().toString())
-                    .append("to", request.getTo().toString())
-                    .append("accepted", request.isAccepted());
+                    .append("from", request.getFrom())
+                    .append("to", request.getTo());
             friendRequests.add(object);
         }
 
-        DBObject object = new BasicDBObject("_id", uuid.toString())
+        Document object = new Document("_id", uuid.toString())
                 .append("knownName", getKnownName())
                 .append("stats", stats)
+                .append("rank", rank.name())
                 .append("coins", coins)
                 .append("points", points)
                 .append("friendRequests", friendRequests)

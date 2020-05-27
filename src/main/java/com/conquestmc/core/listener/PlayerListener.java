@@ -28,26 +28,38 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player pl = event.getPlayer();
+
         if (plugin.getPlayer(pl) == null) {
 
-            DBObject find = new BasicDBObject("_id", pl.getUniqueId().toString());
-            Document doc = plugin.getPlayerCollection().find(eq(find)).first();
+            Document doc = plugin.findPlayer(pl.getUniqueId());
             ConquestPlayer conquestPlayer;
             if (doc != null) {
-               conquestPlayer = new ConquestPlayer(pl.getUniqueId(), new BasicDBObject(doc));
+               conquestPlayer = new ConquestPlayer(pl.getUniqueId(), doc);
             }
             else {
                 conquestPlayer = new ConquestPlayer(pl.getUniqueId(), pl.getName());
             }
 
             plugin.getPlayers().put(pl.getUniqueId(), conquestPlayer);
+            plugin.logPlayer(conquestPlayer);
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
-        plugin.getPlayerCollection().insertOne(new Document(plugin.getPlayer(pl.getUniqueId()).getMongoObject().toMap()));
+
+        Document d = new Document("_id", pl.getUniqueId().toString());
+        Document player = plugin.getPlayer(pl.getUniqueId()).getMongoObject();
+
+        if (plugin.findPlayer(pl.getUniqueId()) == null) {
+            plugin.getPlayerCollection().insertOne(player);
+        }
+        else {
+            plugin.getPlayerCollection().replaceOne(d, player);
+        }
+        plugin.remPlayer(plugin.getPlayer(pl));
+        plugin.getPlayers().remove(pl.getUniqueId());
     }
 
     @EventHandler
