@@ -9,7 +9,10 @@ import lombok.Data;
 
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +28,8 @@ public class ConquestPlayer {
     private Rank rank;
     private int coins;
     private long points;
+
+    private Scoreboard currentScoreboard;
 
     private List<FriendRequest> friendRequests = Lists.newArrayList();
     private List<UUID> friends = Lists.newArrayList();
@@ -80,6 +85,56 @@ public class ConquestPlayer {
         return friendRequests.stream().filter(req -> req.getTo().equals(uuid.toString())).collect(Collectors.toList());
     }
 
+    public String getCompetitiveRankName() {
+        if (points >= 0 && points <= 2499) {
+            return "Noobie";
+        }
+        else if (points >= 2500 && points <= 9999) {
+            return "Still Learning";
+        }
+        else if (points >= 10000 && points <= 24999) {
+            return "Needs Practice";
+        }
+        else if (points >= 25000 && points <= 99999) {
+            return "Elite";
+        }
+        else if (points >= 100000 && points <= 199999) {
+            return "Elite II";
+        }
+        else if (points >= 200000 && points <= 299999) {
+            return "Elite III";
+        }
+        else if (points >= 300000 && points <= 399999) {
+            return "Champion I";
+        }
+        else if (points >= 400000 && points <= 499999) {
+            return "Champion II";
+        }
+        else if (points >= 500000 && points <= 599999) {
+            return "Champion III";
+        }
+        else if (points >= 600000 && points <= 699999) {
+            return "MASTER I";
+        }
+        else if (points >= 700000 && points <= 799999) {
+            return "MASTER II";
+        }
+        else if (points >= 800000 && points <= 949000) {
+            return "MASTER III";
+        }
+        else {
+            return "GRAND MASTER";
+        }
+    }
+
+    public void awardPoints(int points) {
+        setPoints(getPoints() + points);
+    }
+
+    public void sendPointsAwardedMessage(int awarded) {
+        getBukkitPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You've earned " + ChatColor.RED + "" + ChatColor.BOLD +  awarded + ChatColor.GOLD + "" + ChatColor.BOLD +" Conquest Points!");
+    }
+
     public Statistic getStatistic(String name) {
         for (Statistic statistic : statistics) {
             if (statistic.getName().equalsIgnoreCase(name)) {
@@ -87,6 +142,10 @@ public class ConquestPlayer {
             }
         }
         return null;
+    }
+
+    public boolean isStaff() {
+        return Rank.staff().contains(getRank());
     }
 
     public Player getBukkitPlayer() {
@@ -98,7 +157,7 @@ public class ConquestPlayer {
         List<DBObject> friendRequests = Lists.newArrayList();
 
         for (Statistic s : statistics) {
-            DBObject object = new BasicDBObject("_id", s.getName()).append("value", s.getValue());
+            DBObject object = new BasicDBObject("name", s.getName()).append("value", s.getValue());
             stats.add(object);
         }
 
@@ -109,7 +168,7 @@ public class ConquestPlayer {
             friendRequests.add(object);
         }
 
-        Document object = new Document("_id", uuid.toString())
+        Document object = new Document("uuid", getUuid().toString())
                 .append("knownName", getKnownName())
                 .append("stats", stats)
                 .append("rank", rank.name())
@@ -119,5 +178,12 @@ public class ConquestPlayer {
                 .append("friends", friends.stream().map(f -> new BasicDBObject("_id", f.toString())).collect(Collectors.toList()));
 
         return object;
+    }
+
+    public Scoreboard getCurrentScoreboard() {
+        if (currentScoreboard == null) {
+            this.currentScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
+        return currentScoreboard;
     }
 }

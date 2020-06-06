@@ -13,6 +13,7 @@ import com.conquestmc.core.model.Rank;
 import com.conquestmc.core.util.ItemBuilder;
 import com.google.common.collect.Maps;
 import com.mongodb.MongoClient;
+import com.mongodb.async.SingleResultCallback;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
@@ -21,15 +22,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.ipvp.canvas.Menu;
-import org.ipvp.canvas.type.ChestMenu;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import javax.print.Doc;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -56,6 +59,9 @@ public class CorePlugin extends JavaPlugin {
     @Getter
     private MongoCollection<Document> playerCollection;
 
+    @Getter
+    private Map<UUID, PermissionAttachment> perms = Maps.newHashMap();
+
     @Override
     public void onEnable() {
         instance = this;
@@ -81,28 +87,9 @@ public class CorePlugin extends JavaPlugin {
 
     }
 
-    public Menu getTrialGUI(Rank rank, String punishingName) {
-        Menu menu = ChestMenu.builder(6).title(ChatColor.DARK_RED + "Punish " + ChatColor.RED + punishingName).build();
-        ItemStack head = new ItemBuilder(Material.SKULL_ITEM).setSkullOwner(punishingName)
-                .setName(punishingName)
-                .toItemStack();
-
-        menu.getSlot(5, 1).setItem(head);
-        {
-
-        }
-        //TODO finish this gui
-
-        return menu;
-    }
-
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new FriendListener(), this);
-    }
-
-    private void registerCommands() {
-        getCommand("friends").setExecutor(new FriendCommand(this));
     }
 
     public ConquestPlayer getPlayer(Player player) {
@@ -141,12 +128,12 @@ public class CorePlugin extends JavaPlugin {
     }
 
     public Document findPlayer(UUID uuid) {
-        Document doc = getPlayerCollection().find(eq("_id", uuid.toString())).first();
+        Document doc = getPlayerCollection().find(eq("uuid", uuid.toString())).first();
 
         if (doc == null) {
+            System.out.println("Non existant player.. Registering");
             return null;
         }
-        System.out.println("DOC: " + doc.toJson());
         return doc;
     }
 

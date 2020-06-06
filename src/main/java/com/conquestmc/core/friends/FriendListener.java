@@ -9,6 +9,9 @@ public class FriendListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) {
+            return;
+        }
         if (event.getClickedInventory().getTitle().contains("Friends")) {
             event.setCancelled(true);
         }
@@ -16,6 +19,9 @@ public class FriendListener implements Listener {
 
     @EventHandler
     public void onMove(InventoryMoveItemEvent event) {
+        if (event.getSource() == null) {
+            return;
+        }
         if (event.getSource().getTitle().contains("Friends")) {
             event.setCancelled(true);
         }

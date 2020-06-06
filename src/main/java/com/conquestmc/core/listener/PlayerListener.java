@@ -2,10 +2,12 @@ package com.conquestmc.core.listener;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.model.PermissionRegistry;
 import com.conquestmc.core.model.Rank;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -33,15 +37,27 @@ public class PlayerListener implements Listener {
 
             Document doc = plugin.findPlayer(pl.getUniqueId());
             ConquestPlayer conquestPlayer;
+
             if (doc != null) {
-               conquestPlayer = new ConquestPlayer(pl.getUniqueId(), doc);
-            }
-            else {
+                conquestPlayer = new ConquestPlayer(pl.getUniqueId(), doc);
+            } else {
                 conquestPlayer = new ConquestPlayer(pl.getUniqueId(), pl.getName());
+                plugin.getPlayerCollection().insertOne(conquestPlayer.getMongoObject());
             }
 
             plugin.getPlayers().put(pl.getUniqueId(), conquestPlayer);
             plugin.logPlayer(conquestPlayer);
+            plugin.getPerms().put(pl.getUniqueId(), pl.addAttachment(plugin));
+            try {
+                for (String s : PermissionRegistry.valueOf(conquestPlayer.getRank().name()).getPermissions()) {
+                    plugin.getPerms().get(pl.getUniqueId()).setPermission(s, true);
+                }
+            } catch (IllegalArgumentException ignored) {
+
+            }
+        }
+        else {
+            System.out.println("Not null");
         }
     }
 
@@ -49,17 +65,23 @@ public class PlayerListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
 
-        Document d = new Document("_id", pl.getUniqueId().toString());
-        Document player = plugin.getPlayer(pl.getUniqueId()).getMongoObject();
+        Document player = plugin.getPlayers().get(pl.getUniqueId()).getMongoObject();
+        System.out.println("Mongo object is: " + player.toJson());
 
-        if (plugin.findPlayer(pl.getUniqueId()) == null) {
-            plugin.getPlayerCollection().insertOne(player);
+        UpdateResult result = plugin.getPlayerCollection().replaceOne(eq("uuid", pl.getUniqueId().toString()), player);
+
+        if (result.wasAcknowledged()) {
+            System.out.println("Acknowledged, changed: " + result.getModifiedCount());
         }
         else {
-            plugin.getPlayerCollection().replaceOne(d, player);
+            System.out.println("Failed to replace");
         }
+
         plugin.remPlayer(plugin.getPlayer(pl));
         plugin.getPlayers().remove(pl.getUniqueId());
+
+        pl.removeAttachment(plugin.getPerms().get(pl.getUniqueId()));
+        plugin.getPerms().remove(pl.getUniqueId());
     }
 
     @EventHandler
@@ -69,7 +91,7 @@ public class PlayerListener implements Listener {
         Rank rank = conquestPlayer.getRank();
         String format;
         switch (rank) {
-            case TRAIL:
+            case TRIAL:
             case MOD:
             case ADMIN:
             case OWNER:
