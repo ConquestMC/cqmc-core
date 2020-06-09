@@ -67,7 +67,7 @@ public class PunishmentManager {
         for (Punishment p : getPunishmentHistory(uuid)) {
             if (p.getType() == PunishmentType.CHAT) {
 
-                if (p.getActiveUntil() > System.currentTimeMillis()) {
+                if (p.getActiveUntil() > System.currentTimeMillis() || p.getActiveUntil() == -1 || p.isPerm()) {
                     return true;
                 }
             }
@@ -78,7 +78,7 @@ public class PunishmentManager {
     public boolean isGameBanned(UUID uuid) {
         for (Punishment p : getPunishmentHistory(uuid)) {
             if (p.getType() == PunishmentType.GAMEPLAY || p.getType() == PunishmentType.HACKING) {
-                if (p.getActiveUntil() > System.currentTimeMillis()) {
+                if (p.getActiveUntil() > System.currentTimeMillis() || p.getActiveUntil() == -1 || p.isPerm()) {
                     return true;
                 }
             }
