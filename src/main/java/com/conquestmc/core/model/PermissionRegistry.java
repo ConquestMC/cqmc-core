@@ -15,7 +15,8 @@ public enum PermissionRegistry {
     ),
     MANAGER("core.gamemode",
             "core.gamemode.others",
-            "core.setrank");
+            "core.setrank",
+            "staff.punish");
 
     private List<String> perms;
     PermissionRegistry(String... perms) {

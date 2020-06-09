@@ -1,7 +1,9 @@
 package com.conquestmc.core.punishments;
 
 public enum PunishmentType {
-    MUTE,
-    TEMP_BAN,
-    BAN
+    HACKING,
+    GAMEPLAY,
+    CHAT,
+    OTHER,
+    REPORT
 }

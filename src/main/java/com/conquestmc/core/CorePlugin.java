@@ -10,6 +10,9 @@ import com.conquestmc.core.friends.FriendRequestListener;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.model.Rank;
+import com.conquestmc.core.punishments.PunishmentCommand;
+import com.conquestmc.core.punishments.PunishmentListener;
+import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.util.ItemBuilder;
 import com.google.common.collect.Maps;
 import com.mongodb.MongoClient;
@@ -62,6 +65,8 @@ public class CorePlugin extends JavaPlugin {
     @Getter
     private Map<UUID, PermissionAttachment> perms = Maps.newHashMap();
 
+    private PunishmentManager punishmentManager;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -73,10 +78,12 @@ public class CorePlugin extends JavaPlugin {
         this.mongoClient = new MongoClient();
         this.playerDatabase = mongoClient.getDatabase("conquest");
         this.playerCollection = playerDatabase.getCollection("players");
+        this.punishmentManager = new PunishmentManager(playerDatabase);
 
         getCommand("gamemode").setExecutor(new GameModeCommand());
         getCommand("setrank").setExecutor(new RankCommand(this));
         getCommand("friend").setExecutor(new FriendCommand(this));
+        getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
 
         registerListeners();
         registerChannelListeners();
@@ -90,6 +97,7 @@ public class CorePlugin extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new FriendListener(), this);
+        getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
     }
 
     public ConquestPlayer getPlayer(Player player) {
