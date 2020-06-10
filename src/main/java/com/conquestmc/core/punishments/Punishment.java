@@ -1,5 +1,6 @@
 package com.conquestmc.core.punishments;
 
+import com.conquestmc.core.util.TimeUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Setter
 public class Punishment {
 
+    private final long issued;
     private final UUID punished;
     private final UUID punishmentId;
     private final PunishmentType type;
@@ -24,13 +26,15 @@ public class Punishment {
                 .append("type", type.name())
                 .append("perm", perm)
                 .append("activeUntil", activeUntil)
-                .append("severity", severity);
+                .append("severity", severity)
+                .append("issued", issued);
     }
 
     public Punishment(UUID punished, UUID punishmentId, PunishmentType type) {
         this.punished = punished;
         this.punishmentId = punishmentId;
         this.type = type;
+        this.issued = System.currentTimeMillis();
     }
 
     public Punishment(Document doc) {
@@ -40,5 +44,12 @@ public class Punishment {
         this.perm = (boolean) doc.get("perm");
         this.activeUntil = doc.getLong("activeUntil");
         this.severity = doc.getInteger("severity");
+        this.issued = doc.getLong("issued");
+    }
+
+    public String getTimeLeftVisual() {
+        //if end = 1000 and it is currently 500. it is end - current.
+        long remaining = activeUntil - System.currentTimeMillis();
+        return TimeUtil.formatTimeToFormalDate(remaining);
     }
 }

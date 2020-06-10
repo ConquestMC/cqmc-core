@@ -24,6 +24,7 @@ public class PunishmentManager {
 
     private final MongoDatabase database;
     private final MongoCollection<Document> punishmentCollection;
+
     public PunishmentManager(MongoDatabase database) {
         this.database = database;
         this.punishmentCollection = database.getCollection("punishments");
