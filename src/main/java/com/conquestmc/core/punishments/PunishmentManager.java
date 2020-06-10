@@ -89,38 +89,38 @@ public class PunishmentManager {
 
     public long getDuration(PunishmentType type, int severity) {
         long now = System.currentTimeMillis();
-        long hour = now * 3600;
+        long hour = 3600;
         switch (type) {
             case HACKING:
                 if (severity == 1) {
-                    return hour * 24 * 7;
+                    return now + (hour * 24 * 7);
                 } else if (severity == 2) {
-                    return hour * 24 * 30;
+                    return now + (hour * 24 * 30);
 
                 } else if (severity == 3) {
-                    return hour * 24 * 45;
+                    return now + (hour * 24 * 45);
 
                 } else {
                     return -1;
                 }
             case GAMEPLAY:
                 if (severity == 1) {
-                    return hour * 24;
+                    return now + (hour * 24);
                 } else if (severity == 2) {
-                    return hour * 24 * 7;
+                    return now + (hour * 24 * 7);
 
                 } else {
                     return -1;
                 }
             case CHAT:
                 if (severity == 1) {
-                    return hour * 6;
+                    return now + (hour * 6);
                 }
                 if (severity == 2) {
-                    return hour * 24 * 2;
+                    return now + (hour * 24 * 2);
                 }
                 if (severity == 3) {
-                    return hour * 24 * 30;
+                    return now + (hour * 24 * 30);
                 } else {
                     return -1;
                 }
