@@ -11,6 +11,7 @@ import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.model.Rank;
 import com.conquestmc.core.punishments.PunishmentCommand;
+import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
 import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.util.ItemBuilder;
@@ -30,12 +31,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import javax.print.Doc;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -84,6 +82,7 @@ public class CorePlugin extends JavaPlugin {
         getCommand("setrank").setExecutor(new RankCommand(this));
         getCommand("friend").setExecutor(new FriendCommand(this));
         getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
+        getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
 
         registerListeners();
         registerChannelListeners();
