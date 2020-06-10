@@ -16,8 +16,18 @@ commands:
     aliases:
       - f
       - friend
+  punish:
+    description: "Staff punish command"
+    aliases:
+      - p
+  ph:
+    description: "Punish history command"
 permissions:
   core.gamemode:
     description: "gamemode perm"
   core.gamemode.others:
     description: "Gamemode others perm"
+  staff.punish:
+    description: "Punish perm"
+  staff.ph:
+    description: "Punish history perm"

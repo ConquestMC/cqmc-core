@@ -14,6 +14,7 @@ import com.conquestmc.core.punishments.PunishmentCommand;
 import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
 import com.conquestmc.core.punishments.PunishmentManager;
+import com.conquestmc.core.rest.PlayerRestfulService;
 import com.conquestmc.core.util.ItemBuilder;
 import com.google.common.collect.Maps;
 import com.mongodb.MongoClient;
@@ -65,6 +66,8 @@ public class CorePlugin extends JavaPlugin {
 
     private PunishmentManager punishmentManager;
 
+    private PlayerRestfulService playerService;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -78,6 +81,8 @@ public class CorePlugin extends JavaPlugin {
         this.playerCollection = playerDatabase.getCollection("players");
         this.punishmentManager = new PunishmentManager(playerDatabase);
 
+        this.playerService = new PlayerRestfulService();
+
         getCommand("gamemode").setExecutor(new GameModeCommand());
         getCommand("setrank").setExecutor(new RankCommand(this));
         getCommand("friend").setExecutor(new FriendCommand(this));
@@ -86,6 +91,7 @@ public class CorePlugin extends JavaPlugin {
 
         registerListeners();
         registerChannelListeners();
+
     }
 
     @Override
@@ -138,7 +144,7 @@ public class CorePlugin extends JavaPlugin {
         Document doc = getPlayerCollection().find(eq("uuid", uuid.toString())).first();
 
         if (doc == null) {
-            System.out.println("Non existant player.. Registering");
+            System.out.println("Non existent player.. Registering");
             return null;
         }
         return doc;

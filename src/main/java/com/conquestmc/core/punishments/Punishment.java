@@ -6,13 +6,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bson.Document;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class Punishment {
 
-    private final long issued;
+    private final String issued;
     private final UUID punished;
     private final UUID punishmentId;
     private final PunishmentType type;
@@ -21,8 +23,8 @@ public class Punishment {
     private int severity;
 
     public Document getDBObject() {
-        return new Document("uuid", punished)
-                .append("punishmentId", punishmentId)
+        return new Document("uuid", punished.toString())
+                .append("punishmentId", punishmentId.toString())
                 .append("type", type.name())
                 .append("perm", perm)
                 .append("activeUntil", activeUntil)
@@ -34,7 +36,9 @@ public class Punishment {
         this.punished = punished;
         this.punishmentId = punishmentId;
         this.type = type;
-        this.issued = System.currentTimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("dd:mm:yyyy");
+        Date now = new Date(System.currentTimeMillis());
+        this.issued = format.format(now);
     }
 
     public Punishment(Document doc) {
@@ -44,7 +48,7 @@ public class Punishment {
         this.perm = (boolean) doc.get("perm");
         this.activeUntil = doc.getLong("activeUntil");
         this.severity = doc.getInteger("severity");
-        this.issued = doc.getLong("issued");
+        this.issued = doc.getString("issued");
     }
 
     public String getTimeLeftVisual() {

@@ -50,7 +50,7 @@ public class PunishmentManager {
 
     public List<Punishment> getPunishmentHistory(UUID uuid) {
         List<Punishment> history = Lists.newArrayList();
-        FindIterable<Document> findIterable = punishmentCollection.find(eq("uuid", uuid));
+        FindIterable<Document> findIterable = punishmentCollection.find(eq("uuid", uuid.toString()));
 
         for (Document d : findIterable) {
             Punishment p = new Punishment(d);
