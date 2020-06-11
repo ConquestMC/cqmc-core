@@ -61,7 +61,7 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                     ItemMeta meta = punishItem.getItemMeta();
                     meta.setDisplayName(ChatColor.AQUA + WordUtils.capitalizeFully(p.getType().name()));
                     meta.setLore(Arrays.asList(
-                            ChatColor.GOLD + "Date Issued: " + ChatColor.YELLOW + TimeUtil.formatTimeToFormalDate(p.getIssued()),
+                            ChatColor.GOLD + "Date Issued: " + ChatColor.YELLOW + p.getIssued(),
                             ChatColor.GOLD + "Severity: " + ChatColor.YELLOW + p.getSeverity(),
                             ChatColor.GOLD + "Reason: " + ChatColor.YELLOW + "Coming soon.",
                             ChatColor.GOLD + "Duration: " + ChatColor.YELLOW + TimeUtil.formatTimeToFormalDate(p.getActiveUntil()),

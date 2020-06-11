@@ -2,10 +2,12 @@ package com.conquestmc.core.punishments;
 
 import com.conquestmc.core.model.ConquestPlayer;
 import com.google.common.collect.Lists;
-import com.mongodb.DBCollection;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+
+import com.mongodb.Block;
+import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.FindIterable;
+import com.mongodb.async.client.MongoCollection;
+import com.mongodb.async.client.MongoDatabase;
 import org.apache.commons.lang.WordUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -16,6 +18,8 @@ import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -45,19 +49,24 @@ public class PunishmentManager {
             //BAN so kick them.
             punish.kickPlayer(ChatColor.RED + "You have been banned for a " + WordUtils.capitalizeFully(type.name()) + " offence!");
         }
-        this.punishmentCollection.insertOne(p.getDBObject());
+        this.punishmentCollection.insertOne(p.getDBObject(), new SingleResultCallback<Void>() {
+            @Override
+            public void onResult(Void aVoid, Throwable throwable) {
+                System.out.println("done");
+            }
+        });
     }
 
     public List<Punishment> getPunishmentHistory(UUID uuid) {
         List<Punishment> history = Lists.newArrayList();
-        FindIterable<Document> findIterable = punishmentCollection.find(eq("uuid", uuid.toString()));
-
-        for (Document d : findIterable) {
-            Punishment p = new Punishment(d);
-            history.add(p);
+        CompletableFuture<List<Punishment>> future = new CompletableFuture<>();
+        punishmentCollection.find().forEach(document -> history.add(new Punishment(document)), (aVoid, throwable) -> future.complete(history));
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
-
-        return history;
+        return Lists.newArrayList();
     }
 
     public List<Punishment> getPunishmentHistory(ConquestPlayer player) {

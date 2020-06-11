@@ -10,6 +10,7 @@ import com.conquestmc.core.friends.FriendRequestListener;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.model.Rank;
+import com.conquestmc.core.player.PlayerManager;
 import com.conquestmc.core.punishments.PunishmentCommand;
 import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
@@ -17,10 +18,11 @@ import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.rest.PlayerRestfulService;
 import com.conquestmc.core.util.ItemBuilder;
 import com.google.common.collect.Maps;
-import com.mongodb.MongoClient;
 import com.mongodb.async.SingleResultCallback;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.async.client.MongoClient;
+import com.mongodb.async.client.MongoClients;
+import com.mongodb.async.client.MongoCollection;
+import com.mongodb.async.client.MongoDatabase;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.ChatColor;
@@ -35,6 +37,8 @@ import redis.clients.jedis.JedisPool;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -42,9 +46,6 @@ public class CorePlugin extends JavaPlugin {
 
     @Getter
     private ConfigManager serverConfigManager = new ConfigManager(getDataFolder().getName(), "config.json", MainConfig.class);
-
-    @Getter
-    private Map<UUID, ConquestPlayer> players = Maps.newHashMap();
 
     @Getter
     private MainConfig serverConfig;
@@ -68,6 +69,9 @@ public class CorePlugin extends JavaPlugin {
 
     private PlayerRestfulService playerService;
 
+    @Getter
+    private PlayerManager playerManager;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -76,12 +80,14 @@ public class CorePlugin extends JavaPlugin {
 
         this.jedisPool = new JedisPool();
 
-        this.mongoClient = new MongoClient();
+        this.mongoClient = MongoClients.create();
         this.playerDatabase = mongoClient.getDatabase("conquest");
         this.playerCollection = playerDatabase.getCollection("players");
         this.punishmentManager = new PunishmentManager(playerDatabase);
 
         this.playerService = new PlayerRestfulService();
+        this.playerManager = new PlayerManager(playerCollection);
+
 
         getCommand("gamemode").setExecutor(new GameModeCommand());
         getCommand("setrank").setExecutor(new RankCommand(this));
@@ -91,7 +97,6 @@ public class CorePlugin extends JavaPlugin {
 
         registerListeners();
         registerChannelListeners();
-
     }
 
     @Override
@@ -110,7 +115,7 @@ public class CorePlugin extends JavaPlugin {
     }
 
     public ConquestPlayer getPlayer(UUID uuid) {
-        return players.get(uuid);
+        return playerManager.getConquestPlayer(uuid);
     }
 
     public List<String> getOnlinePlayerNames() {
@@ -141,13 +146,17 @@ public class CorePlugin extends JavaPlugin {
     }
 
     public Document findPlayer(UUID uuid) {
-        Document doc = getPlayerCollection().find(eq("uuid", uuid.toString())).first();
+        CompletableFuture<Document> promise = new CompletableFuture<>();
+        getPlayerCollection().find(eq("uuid", uuid.toString())).first((d, throwable) -> {
+            promise.complete(d);
+        });
 
-        if (doc == null) {
-            System.out.println("Non existent player.. Registering");
-            return null;
+        try {
+            return promise.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
-        return doc;
+        return null;
     }
 
     public boolean isPlayerOnNetwork(String name) {

@@ -4,9 +4,7 @@ import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.model.PermissionRegistry;
 import com.conquestmc.core.model.Rank;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bukkit.ChatColor;
@@ -33,31 +31,14 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player pl = event.getPlayer();
 
-        if (plugin.getPlayer(pl) == null) {
-
-            Document doc = plugin.findPlayer(pl.getUniqueId());
-            ConquestPlayer conquestPlayer;
-
-            if (doc != null) {
-                conquestPlayer = new ConquestPlayer(pl.getUniqueId(), doc);
-            } else {
-                conquestPlayer = new ConquestPlayer(pl.getUniqueId(), pl.getName());
-                plugin.getPlayerCollection().insertOne(conquestPlayer.getMongoObject());
+        plugin.getPerms().put(pl.getUniqueId(), pl.addAttachment(plugin));
+        plugin.getPlayerManager().getOrInit(pl.getUniqueId());
+        try {
+            for (String s : PermissionRegistry.valueOf(plugin.getPlayerManager().getConquestPlayer(pl.getUniqueId()).getRank().name()).getPermissions()) {
+                plugin.getPerms().get(pl.getUniqueId()).setPermission(s, true);
             }
+        } catch (IllegalArgumentException ignored) {
 
-            plugin.getPlayers().put(pl.getUniqueId(), conquestPlayer);
-            plugin.logPlayer(conquestPlayer);
-            plugin.getPerms().put(pl.getUniqueId(), pl.addAttachment(plugin));
-            try {
-                for (String s : PermissionRegistry.valueOf(conquestPlayer.getRank().name()).getPermissions()) {
-                    plugin.getPerms().get(pl.getUniqueId()).setPermission(s, true);
-                }
-            } catch (IllegalArgumentException ignored) {
-
-            }
-        }
-        else {
-            System.out.println("Not null");
         }
     }
 
@@ -65,20 +46,10 @@ public class PlayerListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
 
-        Document player = plugin.getPlayers().get(pl.getUniqueId()).getMongoObject();
-        System.out.println("Mongo object is: " + player.toJson());
-
-        UpdateResult result = plugin.getPlayerCollection().replaceOne(eq("uuid", pl.getUniqueId().toString()), player);
-
-        if (result.wasAcknowledged()) {
-            System.out.println("Acknowledged, changed: " + result.getModifiedCount());
-        }
-        else {
-            System.out.println("Failed to replace");
-        }
+        plugin.getPlayerManager().pushPlayer(pl.getUniqueId());
 
         plugin.remPlayer(plugin.getPlayer(pl));
-        plugin.getPlayers().remove(pl.getUniqueId());
+        plugin.getPlayerManager().removePlayer(pl.getUniqueId());
 
         pl.removeAttachment(plugin.getPerms().get(pl.getUniqueId()));
         plugin.getPerms().remove(pl.getUniqueId());
