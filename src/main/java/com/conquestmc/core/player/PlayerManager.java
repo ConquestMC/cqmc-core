@@ -5,7 +5,10 @@ import com.conquestmc.core.model.ConquestPlayer;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.MongoCollection;
+import com.mongodb.client.model.InsertOneOptions;
+import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,14 +25,16 @@ import static com.mongodb.client.model.Filters.eq;
 public class PlayerManager {
 
     private MongoCollection<Document> playerCollection;
+
+    @Getter
     private Map<UUID, ConquestPlayer> players = Maps.newHashMap();
 
     public PlayerManager(MongoCollection<Document> playerCollection) {
         this.playerCollection = playerCollection;
     }
 
-    public void getOrInit(UUID uuid) {
-        //TODO first we would check redis cache, for now just gonna pull from DB or init
+    public CompletableFuture<ConquestPlayer> getOrInitPromise(UUID uuid) {
+        CompletableFuture<ConquestPlayer> promise = new CompletableFuture<>();
 
         try (Jedis j = CorePlugin.getInstance().getJedisPool().getResource()) {
             List<String> cachedPlayerJson = j.lrange("playerCache", 0, -1);
@@ -39,43 +44,43 @@ public class PlayerManager {
 
                 if (obj.get("uuid").getAsString().equalsIgnoreCase(uuid.toString())) {
                     //PLAYER
+                    Document doc = Document.parse(obj.toString());
+                    System.out.println("Found cached player: " + doc);
+                    players.put(uuid, new ConquestPlayer(uuid, doc));
+                    j.lrem("playerCache", 0, json);
+                    promise.complete(players.get(uuid));
+                    return promise;
                 }
             }
         }
 
-        CompletableFuture<ConquestPlayer> promise = new CompletableFuture<>();
-
         playerCollection.find(eq("uuid", uuid.toString())).first((document, throwable) -> {
             if (document == null) {
-                System.out.println("NULL Document");
-                promise.complete(null);
-            } else {
-                players.put(uuid, new ConquestPlayer(uuid, document));
-                System.out.println("Player found from db: " + document.toJson());
-                promise.complete(players.get(uuid));
+                System.out.println("null doc");
+                ConquestPlayer temp = new ConquestPlayer(uuid);
+                players.put(uuid, temp);
+                promise.complete(temp);
+                insertPlayer(uuid);
+            }
+            else {
+                promise.complete(new ConquestPlayer(uuid, document));
             }
         });
-        try {
-            if (promise.get() == null) {
-                this.players.put(uuid, new ConquestPlayer(uuid, Bukkit.getPlayer(uuid).getName()));
-                playerCollection.insertOne(players.get(uuid).getMongoObject(), ((aVoid, throwable) -> {
-                    System.out.println("Inserting default player as none was found");
-                }));
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        return promise;
     }
-
     public void removePlayer(UUID uuid) {
         this.players.remove(uuid);
     }
 
     public void pushPlayer(UUID uuid) {
-        System.out.println(players.get(uuid) == null);
-        System.out.println(players.get(uuid).getMongoObject() == null);
         playerCollection.findOneAndReplace(eq("uuid", uuid.toString()), players.get(uuid).getMongoObject(), (document, throwable) -> {
             System.out.println(document == null);
+        });
+    }
+
+    public void insertPlayer(UUID uuid) {
+        playerCollection.insertOne(players.get(uuid).getMongoObject(), (aVoid, throwable) -> {
+
         });
     }
 

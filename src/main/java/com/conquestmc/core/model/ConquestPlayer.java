@@ -54,9 +54,8 @@ public class ConquestPlayer {
         }
     }
 
-    public ConquestPlayer(UUID uuid, String name) {
+    public ConquestPlayer(UUID uuid) {
         this.uuid = uuid;
-        this.knownName = name;
         this.coins = 0;
         this.points = 0;
         this.rank = Rank.NONE;

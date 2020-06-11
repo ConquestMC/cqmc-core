@@ -12,12 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.concurrent.CompletableFuture;
-
-import static com.mongodb.client.model.Filters.eq;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class PlayerListener implements Listener {
 
@@ -28,18 +28,23 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player pl = event.getPlayer();
-
-        plugin.getPerms().put(pl.getUniqueId(), pl.addAttachment(plugin));
-        plugin.getPlayerManager().getOrInit(pl.getUniqueId());
+    public void onLogin(AsyncPlayerPreLoginEvent event) {
+        UUID uuid = event.getUniqueId();
         try {
-            for (String s : PermissionRegistry.valueOf(plugin.getPlayerManager().getConquestPlayer(pl.getUniqueId()).getRank().name()).getPermissions()) {
-                plugin.getPerms().get(pl.getUniqueId()).setPermission(s, true);
-            }
-        } catch (IllegalArgumentException ignored) {
-
+            plugin.getPlayerManager().getOrInitPromise(uuid).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Could not load player data");
         }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
+           newConquestPlayer.setKnownName(p.getName());
+           plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
+        });
     }
 
     @EventHandler
@@ -50,9 +55,6 @@ public class PlayerListener implements Listener {
 
         plugin.remPlayer(plugin.getPlayer(pl));
         plugin.getPlayerManager().removePlayer(pl.getUniqueId());
-
-        pl.removeAttachment(plugin.getPerms().get(pl.getUniqueId()));
-        plugin.getPerms().remove(pl.getUniqueId());
     }
 
     @EventHandler
