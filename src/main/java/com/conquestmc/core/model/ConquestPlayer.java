@@ -1,7 +1,14 @@
 package com.conquestmc.core.model;
 
+import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.friends.FriendRequest;
+import com.conquestmc.core.player.Rank;
+import com.conquestmc.core.player.StaffRank;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mongodb.BasicDBObject;
 
 import com.mongodb.DBObject;
@@ -25,7 +32,7 @@ public class ConquestPlayer {
     private UUID uuid;
     private String knownName;
 
-    private Rank rank;
+    private List<Rank> ranks;
     private int coins;
     private long points;
 
@@ -36,15 +43,34 @@ public class ConquestPlayer {
 
     private Set<Statistic> statistics = new HashSet<>();
 
+    private Rank prefixedRank;
+
     public ConquestPlayer(UUID uuid, Document object) {
         this.uuid = uuid;
-        this.rank = Rank.valueOf(object.get("rank").toString().toUpperCase());
+        JsonObject jsonObject = new JsonParser().parse(object.toJson()).getAsJsonObject();
+        JsonArray array = jsonObject.getAsJsonArray("ranks");
+
+        for (JsonElement element : array) {
+            String name = element.getAsString();
+            Rank r = CorePlugin.getInstance().getRankManager().getRank(name);
+
+            if (r instanceof StaffRank) {
+                prefixedRank = r;
+            }
+
+            this.ranks.add(CorePlugin.getInstance().getRankManager().getRank(name));
+        }
+
+        if (prefixedRank == null) {
+            this.prefixedRank = ranks.get(0);
+        }
+
         this.knownName = (String) object.get("knownName");
         this.coins = (int) object.get("coins");
         this.points = (long) object.get("points");
 
         for (Document stat : (List<Document>) object.get("stats")) {
-            Statistic statistic = new Statistic((String)stat.get("name"), (int)stat.get("value"));
+            Statistic statistic = new Statistic((String) stat.get("name"), (int) stat.get("value"));
             this.statistics.add(statistic);
         }
 
@@ -58,7 +84,7 @@ public class ConquestPlayer {
         this.uuid = uuid;
         this.coins = 0;
         this.points = 0;
-        this.rank = Rank.NONE;
+        this.ranks.add(CorePlugin.getInstance().getRankManager().getRank("none"));
     }
 
     public void sendFriendRequest(String targetName) {
@@ -87,41 +113,29 @@ public class ConquestPlayer {
     public String getCompetitiveRankName() {
         if (points >= 0 && points <= 2499) {
             return "Noobie";
-        }
-        else if (points >= 2500 && points <= 9999) {
+        } else if (points >= 2500 && points <= 9999) {
             return "Still Learning";
-        }
-        else if (points >= 10000 && points <= 24999) {
+        } else if (points >= 10000 && points <= 24999) {
             return "Needs Practice";
-        }
-        else if (points >= 25000 && points <= 99999) {
+        } else if (points >= 25000 && points <= 99999) {
             return "Elite";
-        }
-        else if (points >= 100000 && points <= 199999) {
+        } else if (points >= 100000 && points <= 199999) {
             return "Elite II";
-        }
-        else if (points >= 200000 && points <= 299999) {
+        } else if (points >= 200000 && points <= 299999) {
             return "Elite III";
-        }
-        else if (points >= 300000 && points <= 399999) {
+        } else if (points >= 300000 && points <= 399999) {
             return "Champion I";
-        }
-        else if (points >= 400000 && points <= 499999) {
+        } else if (points >= 400000 && points <= 499999) {
             return "Champion II";
-        }
-        else if (points >= 500000 && points <= 599999) {
+        } else if (points >= 500000 && points <= 599999) {
             return "Champion III";
-        }
-        else if (points >= 600000 && points <= 699999) {
+        } else if (points >= 600000 && points <= 699999) {
             return "MASTER I";
-        }
-        else if (points >= 700000 && points <= 799999) {
+        } else if (points >= 700000 && points <= 799999) {
             return "MASTER II";
-        }
-        else if (points >= 800000 && points <= 949000) {
+        } else if (points >= 800000 && points <= 949000) {
             return "MASTER III";
-        }
-        else {
+        } else {
             return "GRAND MASTER";
         }
     }
@@ -131,7 +145,7 @@ public class ConquestPlayer {
     }
 
     public void sendPointsAwardedMessage(int awarded) {
-        getBukkitPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You've earned " + ChatColor.RED + "" + ChatColor.BOLD +  awarded + ChatColor.GOLD + "" + ChatColor.BOLD +" Conquest Points!");
+        getBukkitPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You've earned " + ChatColor.RED + "" + ChatColor.BOLD + awarded + ChatColor.GOLD + "" + ChatColor.BOLD + " Conquest Points!");
     }
 
     public Statistic getStatistic(String name) {
@@ -143,9 +157,6 @@ public class ConquestPlayer {
         return null;
     }
 
-    public boolean isStaff() {
-        return Rank.staff().contains(getRank());
-    }
 
     public Player getBukkitPlayer() {
         return Bukkit.getPlayer(uuid);
@@ -167,10 +178,15 @@ public class ConquestPlayer {
             friendRequests.add(object);
         }
 
+        JsonArray rankArray = new JsonArray();
+        for (Rank rank : ranks) {
+            rankArray.add(rank.getName());
+        }
+
         Document object = new Document("uuid", getUuid().toString())
                 .append("knownName", getKnownName())
                 .append("stats", stats)
-                .append("rank", rank.name())
+                .append("ranks", rankArray)
                 .append("coins", coins)
                 .append("points", points)
                 .append("friendRequests", friendRequests)
@@ -184,5 +200,25 @@ public class ConquestPlayer {
             this.currentScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         }
         return currentScoreboard;
+    }
+
+    public boolean hasRank(Rank rank) {
+        for (Rank r : ranks) {
+            if (r.getName().equalsIgnoreCase(rank.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void updatePrefixedRank() {
+        for (Rank rank : ranks) {
+            if (rank instanceof StaffRank) {
+                this.prefixedRank = rank;
+            }
+        }
+        if (prefixedRank == null) {
+            this.prefixedRank = ranks.get(0);
+        }
     }
 }

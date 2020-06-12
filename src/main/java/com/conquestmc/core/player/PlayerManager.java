@@ -12,13 +12,13 @@ import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
 import redis.clients.jedis.Jedis;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -28,6 +28,9 @@ public class PlayerManager {
 
     @Getter
     private Map<UUID, ConquestPlayer> players = Maps.newHashMap();
+
+    @Getter
+    private Map<UUID, PermissionAttachment> permissionAttachments = Maps.newHashMap();
 
     public PlayerManager(MongoCollection<Document> playerCollection) {
         this.playerCollection = playerCollection;
@@ -81,5 +84,19 @@ public class PlayerManager {
         try (Jedis j = CorePlugin.getInstance().getJedisPool().getResource()) {
             j.lpush("playerCache", players.get(uuid).getMongoObject().toJson());
         }
+    }
+
+    public void givePermission(Player player, String perm) {
+        PermissionAttachment attachment = permissionAttachments.getOrDefault(player.getUniqueId(), player.addAttachment(CorePlugin.getInstance()));
+        attachment.setPermission(perm, true);
+        this.permissionAttachments.put(player.getUniqueId(), attachment);
+    }
+
+    public void givePermissions(Player player, String... perms) {
+        PermissionAttachment attachment = permissionAttachments.getOrDefault(player.getUniqueId(), player.addAttachment(CorePlugin.getInstance()));
+        for (String p : perms) {
+            attachment.setPermission(p, true);
+        }
+        permissionAttachments.put(player.getUniqueId(), attachment);
     }
 }

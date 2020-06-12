@@ -10,26 +10,21 @@ import com.conquestmc.core.friends.FriendListener;
 import com.conquestmc.core.friends.FriendRequestListener;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.model.ConquestPlayer;
-import com.conquestmc.core.model.Rank;
 import com.conquestmc.core.player.PlayerManager;
+import com.conquestmc.core.player.RankManager;
 import com.conquestmc.core.punishments.PunishmentCommand;
 import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
 import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.rest.PlayerRestfulService;
-import com.conquestmc.core.util.ItemBuilder;
 import com.google.common.collect.Maps;
-import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 import lombok.Getter;
 import org.bson.Document;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
@@ -73,6 +68,9 @@ public class CorePlugin extends JavaPlugin {
     @Getter
     private PlayerManager playerManager;
 
+    @Getter
+    private RankManager rankManager;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -88,6 +86,7 @@ public class CorePlugin extends JavaPlugin {
 
         this.playerService = new PlayerRestfulService();
         this.playerManager = new PlayerManager(playerCollection);
+        this.rankManager = new RankManager();
 
 
         getCommand("gamemode").setExecutor(new GameModeCommand());

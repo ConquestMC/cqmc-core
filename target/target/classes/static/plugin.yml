@@ -10,14 +10,26 @@ commands:
     usage: "/gm <survivalgames mode>"
   setrank:
     description: "Change a players rank"
-    usage: "/setrank <player> <rank>"
+    usage: "/giverank <player> <rank>"
   friends:
     description: "Default friend command"
     aliases:
       - f
       - friend
+  punish:
+    description: "Staff punish command"
+    aliases:
+      - p
+  ph:
+    description: "Punish history command"
+  hub:
+    description: "hub command"
 permissions:
   core.gamemode:
     description: "gamemode perm"
   core.gamemode.others:
     description: "Gamemode others perm"
+  staff.punish:
+    description: "Punish perm"
+  staff.ph:
+    description: "Punish history perm"
