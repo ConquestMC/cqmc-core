@@ -1,9 +1,6 @@
 package com.conquestmc.core;
 
-import com.conquestmc.core.command.FriendCommand;
-import com.conquestmc.core.command.GameModeCommand;
-import com.conquestmc.core.command.HubCommand;
-import com.conquestmc.core.command.RankCommand;
+import com.conquestmc.core.command.*;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.friends.FriendListener;
@@ -85,16 +82,17 @@ public class CorePlugin extends JavaPlugin {
         this.punishmentManager = new PunishmentManager(playerDatabase);
 
         this.playerService = new PlayerRestfulService();
-        this.playerManager = new PlayerManager(playerCollection);
         this.rankManager = new RankManager();
+        this.playerManager = new PlayerManager(playerCollection);
 
 
         getCommand("gamemode").setExecutor(new GameModeCommand());
-        getCommand("setrank").setExecutor(new RankCommand(this));
+        getCommand("giverank").setExecutor(new RankCommand(this));
         getCommand("friend").setExecutor(new FriendCommand(this));
         getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
         getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
         getCommand("hub").setExecutor(new HubCommand(this));
+        getCommand("demote").setExecutor(new DemoteCommand());
 
         registerListeners();
         registerChannelListeners();

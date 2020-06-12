@@ -32,7 +32,7 @@ public class ConquestPlayer {
     private UUID uuid;
     private String knownName;
 
-    private List<Rank> ranks;
+    private List<Rank> ranks = Lists.newArrayList();
     private int coins;
     private long points;
 
@@ -85,6 +85,7 @@ public class ConquestPlayer {
         this.coins = 0;
         this.points = 0;
         this.ranks.add(CorePlugin.getInstance().getRankManager().getRank("none"));
+        this.prefixedRank = ranks.get(0);
     }
 
     public void sendFriendRequest(String targetName) {
@@ -178,15 +179,15 @@ public class ConquestPlayer {
             friendRequests.add(object);
         }
 
-        JsonArray rankArray = new JsonArray();
-        for (Rank rank : ranks) {
-            rankArray.add(rank.getName());
+        List<String> rankNames = Lists.newArrayList();
+        for (Rank r : ranks) {
+            rankNames.add(r.getName());
         }
 
         Document object = new Document("uuid", getUuid().toString())
                 .append("knownName", getKnownName())
                 .append("stats", stats)
-                .append("ranks", rankArray)
+                .append("ranks", rankNames)
                 .append("coins", coins)
                 .append("points", points)
                 .append("friendRequests", friendRequests)
@@ -212,6 +213,7 @@ public class ConquestPlayer {
     }
 
     public void updatePrefixedRank() {
+        this.prefixedRank = null;
         for (Rank rank : ranks) {
             if (rank instanceof StaffRank) {
                 this.prefixedRank = rank;

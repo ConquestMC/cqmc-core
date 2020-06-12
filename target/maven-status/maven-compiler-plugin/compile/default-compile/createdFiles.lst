@@ -24,6 +24,7 @@ com\conquestmc\core\punishments\PunishmentManager$2.class
 com\conquestmc\core\util\ItemBuilder.class
 com\conquestmc\core\punishments\PunishmentType.class
 com\conquestmc\core\util\SkullMaker.class
+com\conquestmc\core\command\DemoteCommand.class
 com\conquestmc\core\server\CoreServer.class
 com\conquestmc\core\config\MainConfig.class
 com\conquestmc\core\friends\FriendRequestListener.class

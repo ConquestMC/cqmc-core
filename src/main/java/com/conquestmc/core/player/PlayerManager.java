@@ -58,9 +58,6 @@ public class PlayerManager {
     }
 
     public void pushPlayer(UUID uuid) {
-
-        cachePlayer(uuid);
-
         playerCollection.findOneAndReplace(eq("uuid", uuid.toString()), players.get(uuid).getMongoObject(), (document, throwable) -> {
             System.out.println(document == null);
         });
@@ -68,7 +65,9 @@ public class PlayerManager {
 
     public void insertPlayer(UUID uuid) {
         playerCollection.insertOne(players.get(uuid).getMongoObject(), (aVoid, throwable) -> {
-
+            if (throwable != null) {
+                throwable.printStackTrace();
+            }
         });
     }
 
@@ -78,12 +77,6 @@ public class PlayerManager {
 
     public ConquestPlayer getConquestPlayer(UUID uuid) {
         return players.get(uuid);
-    }
-
-    public void cachePlayer(UUID uuid) {
-        try (Jedis j = CorePlugin.getInstance().getJedisPool().getResource()) {
-            j.lpush("playerCache", players.get(uuid).getMongoObject().toJson());
-        }
     }
 
     public void givePermission(Player player, String perm) {

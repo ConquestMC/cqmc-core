@@ -1,6 +1,7 @@
 package com.conquestmc.core.player;
 
 import com.google.common.collect.Lists;
+import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,7 @@ public class Rank {
     }
 
     public String getPrefix() {
-        return prefix;
+        return ChatColor.translateAlternateColorCodes('&', prefix);
     }
 
     public List<Rank> getInherits() {

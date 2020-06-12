@@ -55,7 +55,9 @@ public class RankCommand implements CommandExecutor {
 
         plugin.getPlayerManager().getConquestPlayer(target.getUniqueId()).getRanks().add(rank);
         sender.sendMessage(ChatColor.GREEN + "You have given " + ChatColor.YELLOW + target.getName() + ChatColor.GREEN + " a new rank!");
-        target.sendMessage(ChatColor.GREEN + "You have been awarded the rank: " + ChatColor.translateAlternateColorCodes('&', rank.getPrefix() + rank.getName()));
+        target.sendMessage(ChatColor.GREEN + "You have been awarded the rank: " + ChatColor.translateAlternateColorCodes('&', rank instanceof StaffRank ? rank.getPrefix() : rank.getPrefix() + rank.getName()));
+
+        plugin.getPlayer(target).updatePrefixedRank();
         return true;
     }
 }

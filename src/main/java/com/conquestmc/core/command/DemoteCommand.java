@@ -45,7 +45,6 @@ public class DemoteCommand implements CommandExecutor {
         }
 
         ranks.remove(staffRank);
-        //TODO remove all perms
         CorePlugin.getInstance().getPlayer(target).updatePrefixedRank();
         return true;
     }
