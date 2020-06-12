@@ -7,6 +7,7 @@ import com.conquestmc.core.model.Rank;
 
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,15 +42,20 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
-           newConquestPlayer.setKnownName(p.getName());
-           plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
-        });
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
+                newConquestPlayer.setKnownName(p.getName());
+                plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
+            });
+        }, 3L);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
+
+        System.out.println("CALLED");
 
         plugin.getPlayerManager().pushPlayer(pl.getUniqueId());
 

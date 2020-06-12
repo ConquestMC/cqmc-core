@@ -36,24 +36,6 @@ public class PlayerManager {
     public CompletableFuture<ConquestPlayer> getOrInitPromise(UUID uuid) {
         CompletableFuture<ConquestPlayer> promise = new CompletableFuture<>();
 
-        try (Jedis j = CorePlugin.getInstance().getJedisPool().getResource()) {
-            List<String> cachedPlayerJson = j.lrange("playerCache", 0, -1);
-
-            for (String json : cachedPlayerJson) {
-                JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
-
-                if (obj.get("uuid").getAsString().equalsIgnoreCase(uuid.toString())) {
-                    //PLAYER
-                    Document doc = Document.parse(obj.toString());
-                    System.out.println("Found cached player: " + doc);
-                    players.put(uuid, new ConquestPlayer(uuid, doc));
-                    j.lrem("playerCache", 0, json);
-                    promise.complete(players.get(uuid));
-                    return promise;
-                }
-            }
-        }
-
         playerCollection.find(eq("uuid", uuid.toString())).first((document, throwable) -> {
             if (document == null) {
                 System.out.println("null doc");
@@ -73,6 +55,9 @@ public class PlayerManager {
     }
 
     public void pushPlayer(UUID uuid) {
+
+        cachePlayer(uuid);
+
         playerCollection.findOneAndReplace(eq("uuid", uuid.toString()), players.get(uuid).getMongoObject(), (document, throwable) -> {
             System.out.println(document == null);
         });

@@ -2,6 +2,7 @@ package com.conquestmc.core;
 
 import com.conquestmc.core.command.FriendCommand;
 import com.conquestmc.core.command.GameModeCommand;
+import com.conquestmc.core.command.HubCommand;
 import com.conquestmc.core.command.RankCommand;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
@@ -94,6 +95,7 @@ public class CorePlugin extends JavaPlugin {
         getCommand("friend").setExecutor(new FriendCommand(this));
         getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
         getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
+        getCommand("hub").setExecutor(new HubCommand(this));
 
         registerListeners();
         registerChannelListeners();

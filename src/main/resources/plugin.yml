@@ -22,6 +22,8 @@ commands:
       - p
   ph:
     description: "Punish history command"
+  hub:
+    description: "hub command"
 permissions:
   core.gamemode:
     description: "gamemode perm"
