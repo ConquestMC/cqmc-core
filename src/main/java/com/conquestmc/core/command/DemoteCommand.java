@@ -46,6 +46,7 @@ public class DemoteCommand implements CommandExecutor {
 
         ranks.remove(staffRank);
         CorePlugin.getInstance().getPlayer(target).updatePrefixedRank();
+        commandSender.sendMessage(ChatColor.GREEN + "You have demoted " + ChatColor.YELLOW + target.getName());
         return true;
     }
 }
