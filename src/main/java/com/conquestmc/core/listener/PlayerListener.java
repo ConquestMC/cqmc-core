@@ -31,12 +31,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
-        try {
-            plugin.getPlayerManager().getOrInitPromise(uuid).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Could not load player data");
-        }
+        plugin.getPlayerManager().getOrInitPromise(uuid).whenComplete((player, err) -> {
+            if (err != null) {
+                System.err.println(err);
+            } else {
+                plugin.getPlayerManager().getPlayers().put(player.getUuid(), player);
+            }
+        });
     }
 
     @EventHandler

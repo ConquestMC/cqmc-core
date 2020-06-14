@@ -24,6 +24,7 @@ import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -60,8 +61,6 @@ public class CorePlugin extends JavaPlugin {
 
     private PunishmentManager punishmentManager;
 
-    private PlayerRestfulService playerService;
-
     @Getter
     private PlayerManager playerManager;
 
@@ -81,7 +80,6 @@ public class CorePlugin extends JavaPlugin {
         this.playerCollection = playerDatabase.getCollection("players");
         this.punishmentManager = new PunishmentManager(playerDatabase);
 
-        this.playerService = new PlayerRestfulService();
         this.rankManager = new RankManager();
         this.playerManager = new PlayerManager(playerCollection);
 
@@ -114,7 +112,7 @@ public class CorePlugin extends JavaPlugin {
     }
 
     public ConquestPlayer getPlayer(UUID uuid) {
-        return playerManager.getConquestPlayer(uuid);
+        return playerManager.getPlayers().get(uuid);
     }
 
     public List<String> getOnlinePlayerNames() {
