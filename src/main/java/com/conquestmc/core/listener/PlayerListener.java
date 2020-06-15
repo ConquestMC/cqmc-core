@@ -6,6 +6,7 @@ import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.player.Rank;
 
 import com.conquestmc.core.player.StaffRank;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,10 +24,10 @@ public class PlayerListener implements Listener {
     private CorePlugin plugin;
 
     private String[] joinMessages = new String[]{
-            "&b&lJoin >> &c{rank} {name} has joined the game",
-            "&b&lJoin >> &5{rank} {name} has joined the game",
-            "&b&lJoin >> &6{rank} {name} has joined the game",
-            "&b&lJoin >> &6&l{rank} {name} has joined the game"
+            "&8&l[&2&l+&8&l] &c{rank} {name} has joined the game",
+            "&8&l[&2&l+&8&l] &5{rank} {name} has joined the game",
+            "&8&l[&2&l+&8&l] &6{rank} {name} has joined the game",
+            "&8&l[&2&l+&8&l] &6&l{rank} {name} has joined the game"
     };
 
     public PlayerListener(CorePlugin plugin) {
@@ -62,23 +63,23 @@ public class PlayerListener implements Listener {
                 Rank prefixed = newConquestPlayer.getPrefixedRank();
                 if (prefixed instanceof StaffRank) {
                     Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[0]
-                                    .replace("{rank}", prefixed.getName())
+                                    .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
                                     .replace("{name}", p.getName())));
                 }
                 else {
                     if (prefixed.getName().equalsIgnoreCase("content")) {
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[1]
-                                .replace("{rank}", prefixed.getName())
+                                .replace("{rank}", "Content Creator")
                                 .replace("{name}", p.getName())));
                     }
                     if (prefixed.getName().equalsIgnoreCase("king")) {
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[2]
-                                .replace("{rank}", prefixed.getName())
+                                .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
                                 .replace("{name}", p.getName())));
                     }
                     if (prefixed.getName().equalsIgnoreCase("emperor")) {
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[3]
-                                .replace("{rank}", prefixed.getName())
+                                .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
                                 .replace("{name}", p.getName())));
                     }
                 }

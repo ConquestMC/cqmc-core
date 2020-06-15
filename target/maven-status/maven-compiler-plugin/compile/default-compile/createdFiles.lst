@@ -10,6 +10,7 @@ com\conquestmc\core\command\FriendCommand.class
 com\conquestmc\core\player\DonationRank.class
 com\conquestmc\core\player\PlayerManager.class
 com\conquestmc\core\friends\FriendListener.class
+com\conquestmc\core\model\TeamData.class
 com\conquestmc\core\model\ConquestPlayer.class
 com\conquestmc\core\command\PardonCommand.class
 com\conquestmc\core\command\HubCommand.class
@@ -17,11 +18,11 @@ com\conquestmc\core\model\SimpleScoreboard.class
 com\conquestmc\core\server\ServerListener.class
 com\conquestmc\core\player\Rank.class
 com\conquestmc\core\command\PluginCommand.class
-com\conquestmc\core\model\DonationRank.class
 com\conquestmc\core\config\AccessCode.class
 com\conquestmc\core\listener\PlayerListener.class
 com\conquestmc\core\punishments\PunishmentManager$2.class
 com\conquestmc\core\util\ItemBuilder.class
+com\conquestmc\core\command\SpeedCommand.class
 com\conquestmc\core\punishments\PunishmentType.class
 com\conquestmc\core\util\SkullMaker.class
 com\conquestmc\core\command\DemoteCommand.class

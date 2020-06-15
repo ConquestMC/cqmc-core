@@ -6,7 +6,6 @@ C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\model\Simp
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\player\Rank.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\punishments\PunishmentType.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\CorePlugin.java
-C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\model\DonationRank.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\command\GameModeCommand.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\punishments\PunishmentListener.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\util\ItemBuilder.java
@@ -23,8 +22,10 @@ C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\server\Cor
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\config\ConfigManager.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\player\RankManager.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\util\SkullMaker.java
+C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\model\TeamData.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\player\DonationRank.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\util\TimeUtil.java
+C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\command\SpeedCommand.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\config\AccessCode.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\command\PardonCommand.java
 C:\Users\14038\ConquestMC\cqmc-core\src\main\java\com\conquestmc\core\friends\FriendRequestListener.java
