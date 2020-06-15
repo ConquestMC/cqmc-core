@@ -5,6 +5,7 @@ import com.conquestmc.core.model.ConquestPlayer;
 
 import com.conquestmc.core.player.Rank;
 
+import com.conquestmc.core.player.StaffRank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,6 +21,13 @@ import java.util.UUID;
 public class PlayerListener implements Listener {
 
     private CorePlugin plugin;
+
+    private String[] joinMessages = new String[]{
+            "&b&lJoin >> &c{rank} {name} has joined the game",
+            "&b&lJoin >> &5{rank} {name} has joined the game",
+            "&b&lJoin >> &6{rank} {name} has joined the game",
+            "&b&lJoin >> &6&l{rank} {name} has joined the game"
+    };
 
     public PlayerListener(CorePlugin plugin) {
         this.plugin = plugin;
@@ -40,6 +48,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+        event.setJoinMessage("");
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
@@ -48,6 +57,30 @@ public class PlayerListener implements Listener {
                     String[] arr = new String[rank.getPermissions().size()];
                     plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
                     System.out.println(plugin.getPlayerManager().getPermissionAttachments().get(p.getUniqueId()).getPermissible().getEffectivePermissions().toString());
+                }
+
+                Rank prefixed = newConquestPlayer.getPrefixedRank();
+                if (prefixed instanceof StaffRank) {
+                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[0]
+                                    .replace("{rank}", prefixed.getName())
+                                    .replace("{name}", p.getName())));
+                }
+                else {
+                    if (prefixed.getName().equalsIgnoreCase("content")) {
+                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[1]
+                                .replace("{rank}", prefixed.getName())
+                                .replace("{name}", p.getName())));
+                    }
+                    if (prefixed.getName().equalsIgnoreCase("king")) {
+                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[2]
+                                .replace("{rank}", prefixed.getName())
+                                .replace("{name}", p.getName())));
+                    }
+                    if (prefixed.getName().equalsIgnoreCase("emperor")) {
+                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[3]
+                                .replace("{rank}", prefixed.getName())
+                                .replace("{name}", p.getName())));
+                    }
                 }
                 plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
             });

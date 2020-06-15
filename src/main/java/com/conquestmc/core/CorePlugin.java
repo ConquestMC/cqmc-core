@@ -71,7 +71,7 @@ public class CorePlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         serverConfigManager.init();
-        this.serverConfig = (MainConfig) serverConfigManager.getConfig();
+        this.serverConfig = serverConfigManager.getConfig();
 
         this.jedisPool = new JedisPool();
 
@@ -158,5 +158,9 @@ public class CorePlugin extends JavaPlugin {
 
     public boolean isPlayerOnNetwork(String name) {
         return getOnlinePlayerNames().contains(name);
+    }
+
+    public boolean isGameServer() {
+        return getServer().getPluginManager().isPluginEnabled("ConquestGames");
     }
 }
