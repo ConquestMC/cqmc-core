@@ -39,7 +39,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class CorePlugin extends JavaPlugin {
 
     @Getter
-    private ConfigManager serverConfigManager = new ConfigManager(getDataFolder().getName(), "config.json", MainConfig.class);
+    private ConfigManager<MainConfig> serverConfigManager = new ConfigManager<>(this, "config.json", MainConfig.class);
 
     @Getter
     private MainConfig serverConfig;

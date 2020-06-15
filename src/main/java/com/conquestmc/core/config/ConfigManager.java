@@ -5,12 +5,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.net.URL;
 
 public class ConfigManager<T> {
 
+    private JavaPlugin plugin;
     private String fileName;
     private Class clazz;
     private Gson gson;
@@ -19,8 +21,9 @@ public class ConfigManager<T> {
     @Getter
     private T config;
 
-    public ConfigManager(String directory, String fileName, Class clazz) {
-        this.directory = directory;
+    public ConfigManager(JavaPlugin plugin, String fileName, Class clazz) {
+        this.plugin = plugin;
+        this.directory = plugin.getDataFolder().getName();
         this.fileName = fileName;
         this.clazz = clazz;
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).setPrettyPrinting().create();
@@ -33,7 +36,7 @@ public class ConfigManager<T> {
         }
         File file = new File("plugins/" + directory + "/" + fileName);
         if (!file.exists()) {
-            URL url = getClass().getResource("/" + fileName);
+            URL url = plugin.getClass().getResource("/" + fileName);
             try {
                 System.out.println("[CQMC-CORE] COPYING DEFAULT CONFIG: " + fileName);
                 FileUtils.copyURLToFile(url, file);
