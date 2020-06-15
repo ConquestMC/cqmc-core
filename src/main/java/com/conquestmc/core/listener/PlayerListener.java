@@ -4,7 +4,7 @@ import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
 
 import com.conquestmc.core.player.Rank;
-import com.conquestmc.core.player.StaffRank;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,10 +15,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class PlayerListener implements Listener {
 
@@ -50,6 +47,7 @@ public class PlayerListener implements Listener {
                 for (Rank rank : newConquestPlayer.getRanks()) {
                     String[] arr = new String[rank.getPermissions().size()];
                     plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
+                    System.out.println(plugin.getPlayerManager().getPermissionAttachments().get(p.getUniqueId()).getPermissible().getEffectivePermissions().toString());
                 }
                 plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
             });
