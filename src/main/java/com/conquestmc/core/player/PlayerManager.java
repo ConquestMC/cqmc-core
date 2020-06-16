@@ -85,4 +85,9 @@ public class PlayerManager {
         }
         permissionAttachments.put(player.getUniqueId(), attachment);
     }
+
+    public void removePermissions(Player player) {
+        PermissionAttachment attachment = this.permissionAttachments.get(player.getUniqueId());
+        player.removeAttachment(attachment);
+    }
 }

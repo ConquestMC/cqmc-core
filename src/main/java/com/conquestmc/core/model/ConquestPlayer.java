@@ -36,7 +36,7 @@ public class ConquestPlayer {
     private int coins;
     private long points;
 
-    private Scoreboard currentScoreboard;
+    private SimpleScoreboard currentScoreboard;
 
     private List<FriendRequest> friendRequests = Lists.newArrayList();
     private List<UUID> friends = Lists.newArrayList();
@@ -196,11 +196,12 @@ public class ConquestPlayer {
         return object;
     }
 
-    public Scoreboard getCurrentScoreboard() {
-        if (currentScoreboard == null) {
-            this.currentScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        }
+    public SimpleScoreboard getCurrentScoreboard() {
         return currentScoreboard;
+    }
+
+    public void setCurrentScoreboard(SimpleScoreboard scoreboard) {
+        this.currentScoreboard = scoreboard;
     }
 
     public boolean hasRank(Rank rank) {

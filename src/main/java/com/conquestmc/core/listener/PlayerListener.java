@@ -3,6 +3,7 @@ package com.conquestmc.core.listener;
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
 
+import com.conquestmc.core.model.SimpleScoreboard;
 import com.conquestmc.core.player.Rank;
 
 import com.conquestmc.core.player.StaffRank;
@@ -24,10 +25,10 @@ public class PlayerListener implements Listener {
     private CorePlugin plugin;
 
     private String[] joinMessages = new String[]{
-            "&8&l[&2&l+&8&l] &c{rank} {name} has joined the game",
-            "&8&l[&2&l+&8&l] &5{rank} {name} has joined the game",
-            "&8&l[&2&l+&8&l] &6{rank} {name} has joined the game",
-            "&8&l[&2&l+&8&l] &6&l{rank} {name} has joined the game"
+            "  &8&l[&2&l+&8&l] &c{rank} {name} has joined the game",
+            "  &8&l[&2&l+&8&l] &5{rank} {name} has joined the game",
+            "  &8&l[&2&l+&8&l] &6{rank} {name} has joined the game",
+            "  &8&l[&2&l+&8&l] &6&l{rank} {name} has joined the game"
     };
 
     public PlayerListener(CorePlugin plugin) {
@@ -57,7 +58,6 @@ public class PlayerListener implements Listener {
                 for (Rank rank : newConquestPlayer.getRanks()) {
                     String[] arr = new String[rank.getPermissions().size()];
                     plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
-                    System.out.println(plugin.getPlayerManager().getPermissionAttachments().get(p.getUniqueId()).getPermissible().getEffectivePermissions().toString());
                 }
 
                 Rank prefixed = newConquestPlayer.getPrefixedRank();
@@ -92,11 +92,11 @@ public class PlayerListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
 
-        System.out.println("CALLED");
 
         plugin.getPlayerManager().pushPlayer(pl.getUniqueId());
 
         plugin.remPlayer(plugin.getPlayer(pl));
+        plugin.getPlayerManager().removePermissions(pl);
         plugin.getPlayerManager().removePlayer(pl.getUniqueId());
     }
 
