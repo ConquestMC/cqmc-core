@@ -11,41 +11,51 @@ public class RankManager {
 
     public RankManager() {
         Rank none = new Rank("none");
-        Rank explorer = new DonationRank("explorer");
-        explorer.setPrefix("&a");
         Rank knight = new DonationRank("knight");
-        knight.setPrefix("&b");
+        knight.setPrefix("&bKnight");
+        Rank duke = new DonationRank("duke");
+        duke.setPrefix("&aDuke");
         Rank lord = new DonationRank("lord");
-        lord.setPrefix("&5");
+        lord.setPrefix("&dLord");
         Rank king = new DonationRank("king");
-        king.setPrefix("&6");
-        Rank content = new DonationRank("content");
-        content.setPrefix("&d");
+        king.setPrefix("&6King");
+
+        Rank emperor = new DonationRank("emperor");
+        emperor.setPrefix("&6&lEmperor");
+
+        Rank media = new DonationRank("media");
+        media.setPrefix("&5&lMedia");
+
         Rank trial = new DonationRank("trial");
-        trial.setPrefix("&3&lTRIAL &6");
+        trial.setPrefix("&3&lTrial");
         Rank mod = new StaffRank("mod", Arrays.asList(trial));
-        mod.setPrefix("&2&lMOD &6");
+        mod.setPrefix("&2&lMod");
+
+        Rank srmod = new StaffRank("srmod", Arrays.asList(trial));
+        srmod.setPrefix("&2&lSrMod");
+
         Rank admin = new StaffRank("admin", Arrays.asList(mod));
-        admin.setPrefix("&c&lADMIN &6");
+        admin.setPrefix("&c&lAdmin");
         admin.addPermissions("core.gamemode", "core.gamemode.others", "staff.punish");
 
         Rank manager = new StaffRank("manager", Arrays.asList(admin));
-        manager.setPrefix("&4&lMANAGER &6");
+        manager.setPrefix("&4&lManager");
         manager.addPermission("core.setrank");
 
         Rank dev = new StaffRank("dev", Arrays.asList(manager));
-        dev.setPrefix("&5&lDEV &6");
-        Rank owner = new StaffRank("owner", Arrays.asList(dev, content, king, lord, knight, explorer, none));
-        owner.setPrefix("&4&lOWNER &6");
+        dev.setPrefix("&5&lDev");
+        Rank owner = new StaffRank("owner", Arrays.asList(dev, media, king, lord, knight, duke, none));
+        owner.setPrefix("&4&lOwner");
 
         ranks.put("none", none);
-        ranks.put("explorer", explorer);
         ranks.put("knight", knight);
+        ranks.put("duke", duke);
         ranks.put("lord", lord);
         ranks.put("king", king);
-        ranks.put("content", content);
+        ranks.put("media", media);
         ranks.put("trial", trial);
         ranks.put("mod", mod);
+        ranks.put("srmod", srmod);
         ranks.put("admin", admin);
         ranks.put("manager", manager);
         ranks.put("dev", dev);

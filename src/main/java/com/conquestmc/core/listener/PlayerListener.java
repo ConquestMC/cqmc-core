@@ -106,21 +106,7 @@ public class PlayerListener implements Listener {
         ConquestPlayer conquestPlayer = plugin.getPlayer(player);
         Rank prefixedRank = conquestPlayer.getPrefixedRank();
 
-
-        String format;
-        switch (prefixedRank.getName()) {
-            case "trial":
-            case "mod":
-            case "admin":
-            case "dev":
-            case "owner":
-            case "manager":
-                format = prefixedRank.getPrefix() + player.getName() + ChatColor.WHITE + " : " + ChatColor.translateAlternateColorCodes('&', event.getMessage());
-                break;
-            default:
-                format = ChatColor.YELLOW + "" + conquestPlayer.getPoints() + " " + prefixedRank.getPrefix() + player.getName() + ChatColor.WHITE + " : " + ChatColor.translateAlternateColorCodes('&', event.getMessage());
-                break;
-        }
+        String format = prefixedRank.getPrefix() + ChatColor.GRAY + " ⎥ " + ChatColor.YELLOW + player.getName();
         event.setFormat(format);
     }
 }
