@@ -120,7 +120,8 @@ public class PlayerListener implements Listener {
         Rank prefixedRank = conquestPlayer.getPrefixedRank();
 
         String chat = prefixedRank.getName().equalsIgnoreCase("none") ? ChatColor.GRAY + event.getMessage() : ChatColor.WHITE + event.getMessage();
-        String format = prefixedRank.getPrefix() + ChatColor.GRAY + " ⎥ " + ChatColor.YELLOW + player.getName() + " " + chat;
+        String prefix = prefixedRank.getName().equalsIgnoreCase("none") ? "" : prefixedRank.getPrefix() + ChatColor.GRAY + " ⎥ ";
+        String format = prefix + ChatColor.YELLOW + player.getName() + " " + chat;
         event.setFormat(format);
     }
 }
