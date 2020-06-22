@@ -53,10 +53,9 @@ public class PlayerListener implements Listener {
                 System.err.println(throwable);
                 return;
             }
-
-            Bukkit.getPluginManager().callEvent(new PlayerLoadedEvent(conquestPlayer));
             System.out.println(conquestPlayer.getBukkitPlayer().getName() + " Joined with rank: " + conquestPlayer.getPrefixedRank().getPrefix());
         }));
+        Bukkit.getPluginManager().callEvent(new PlayerLoadedEvent(plugin.getPlayer(uuid)));
     }
 
     @EventHandler
@@ -120,7 +119,8 @@ public class PlayerListener implements Listener {
         ConquestPlayer conquestPlayer = plugin.getPlayer(player);
         Rank prefixedRank = conquestPlayer.getPrefixedRank();
 
-        String format = prefixedRank.getPrefix() + ChatColor.GRAY + " ⎥ " + ChatColor.YELLOW + player.getName();
+        String chat = prefixedRank.getName().equalsIgnoreCase("none") ? ChatColor.GRAY + event.getMessage() : ChatColor.WHITE + event.getMessage();
+        String format = prefixedRank.getPrefix() + ChatColor.GRAY + " ⎥ " + ChatColor.YELLOW + player.getName() + " " + chat;
         event.setFormat(format);
     }
 }
