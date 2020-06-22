@@ -38,13 +38,22 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
-        plugin.getPlayerManager().getOrInitPromise(uuid).whenComplete((player, err) -> {
-            if (err != null) {
-                System.err.println(err);
-            } else {
-                plugin.getPlayerManager().getPlayers().put(player.getUuid(), player);
+
+        while (plugin.getJedisPool().getResource().setnx(uuid.toString(), "online") != 1) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
+        }
+
+        plugin.getPlayerManager().getOrInitPromise(uuid).whenComplete(((conquestPlayer, throwable) -> {
+            if (throwable != null) {
+                System.err.println(throwable);
+                return;
+            }
+            System.out.println(conquestPlayer.getBukkitPlayer().getName() + " Joined with rank: " + conquestPlayer.getPrefixedRank().getPrefix());
+        }));
     }
 
     @EventHandler
@@ -52,48 +61,50 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
         event.setJoinMessage("");
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
-                newConquestPlayer.setKnownName(p.getName());
-                for (Rank rank : newConquestPlayer.getRanks()) {
-                    String[] arr = new String[rank.getPermissions().size()];
-                    plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
-                }
+        plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
+            newConquestPlayer.setKnownName(p.getName());
+            for (Rank rank : newConquestPlayer.getRanks()) {
+                String[] arr = new String[rank.getPermissions().size()];
+                plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
+            }
 
-                Rank prefixed = newConquestPlayer.getPrefixedRank();
-                if (prefixed instanceof StaffRank) {
-                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[0]
-                                    .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
-                                    .replace("{name}", p.getName())));
+            Rank prefixed = newConquestPlayer.getPrefixedRank();
+            if (prefixed instanceof StaffRank) {
+                Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[0]
+                        .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
+                        .replace("{name}", p.getName())));
+            } else {
+                if (prefixed.getName().equalsIgnoreCase("content")) {
+                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[1]
+                            .replace("{rank}", "Content Creator")
+                            .replace("{name}", p.getName())));
                 }
-                else {
-                    if (prefixed.getName().equalsIgnoreCase("content")) {
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[1]
-                                .replace("{rank}", "Content Creator")
-                                .replace("{name}", p.getName())));
-                    }
-                    if (prefixed.getName().equalsIgnoreCase("king")) {
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[2]
-                                .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
-                                .replace("{name}", p.getName())));
-                    }
-                    if (prefixed.getName().equalsIgnoreCase("emperor")) {
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[3]
-                                .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
-                                .replace("{name}", p.getName())));
-                    }
+                if (prefixed.getName().equalsIgnoreCase("king")) {
+                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[2]
+                            .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
+                            .replace("{name}", p.getName())));
                 }
-                plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
-            });
-        }, 3L);
+                if (prefixed.getName().equalsIgnoreCase("emperor")) {
+                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[3]
+                            .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
+                            .replace("{name}", p.getName())));
+                }
+            }
+            plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
+        });
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
+        //plugin.getPlayerManager().pushPlayer(pl.getUniqueId());
 
-
-        plugin.getPlayerManager().pushPlayer(pl.getUniqueId());
+        plugin.getPlayerManager().updatePlayer(pl.getUniqueId()).whenComplete((b, throwable) -> {
+            if (throwable != null) {
+                System.err.println(throwable.getStackTrace());
+            }
+            plugin.getJedisPool().getResource().del(pl.getUniqueId().toString());
+        });
 
         plugin.remPlayer(plugin.getPlayer(pl));
         plugin.getPlayerManager().removePermissions(pl);

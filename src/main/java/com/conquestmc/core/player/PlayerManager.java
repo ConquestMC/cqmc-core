@@ -32,6 +32,11 @@ public class PlayerManager {
     public CompletableFuture<ConquestPlayer> getOrInitPromise(UUID uuid) {
         CompletableFuture<ConquestPlayer> promise = new CompletableFuture<>();
 
+        if (players.get(uuid) != null) {
+            promise.complete(players.get(uuid));
+            return promise;
+        }
+
         playerCollection.find(eq("uuid", uuid.toString())).first((document, throwable) -> {
             if (document == null) {
                 System.out.println("null doc");
@@ -41,13 +46,29 @@ public class PlayerManager {
                 insertPlayer(uuid);
             }
             else {
-                promise.complete(new ConquestPlayer(uuid, document));
+                ConquestPlayer pl = new ConquestPlayer(uuid, document);
+                this.players.put(uuid, pl);
+                promise.complete(pl);
             }
         });
         return promise;
     }
     public void removePlayer(UUID uuid) {
         this.players.remove(uuid);
+    }
+
+    public CompletableFuture<Boolean> updatePlayer(UUID uuid) {
+        CompletableFuture<Boolean> promise = new CompletableFuture<>();
+        playerCollection.findOneAndReplace(eq("uuid", uuid.toString()), players.get(uuid).getMongoObject(), ((document, throwable) -> {
+            if (throwable != null) {
+                System.err.println(throwable);
+                promise.complete(false);
+            }
+            else {
+                promise.complete(true);
+            }
+        }));
+        return promise;
     }
 
     public void pushPlayer(UUID uuid) {
