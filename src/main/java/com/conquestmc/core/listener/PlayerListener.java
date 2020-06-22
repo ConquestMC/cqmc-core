@@ -1,6 +1,7 @@
 package com.conquestmc.core.listener;
 
 import com.conquestmc.core.CorePlugin;
+import com.conquestmc.core.event.PlayerLoadedEvent;
 import com.conquestmc.core.model.ConquestPlayer;
 
 import com.conquestmc.core.model.SimpleScoreboard;
@@ -52,6 +53,8 @@ public class PlayerListener implements Listener {
                 System.err.println(throwable);
                 return;
             }
+
+            Bukkit.getPluginManager().callEvent(new PlayerLoadedEvent(conquestPlayer));
             System.out.println(conquestPlayer.getBukkitPlayer().getName() + " Joined with rank: " + conquestPlayer.getPrefixedRank().getPrefix());
         }));
     }
