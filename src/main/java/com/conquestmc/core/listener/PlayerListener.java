@@ -18,6 +18,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import redis.clients.jedis.Jedis;
 
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class PlayerListener implements Listener {
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        while (plugin.getJedisPool().getResource().setnx(uuid.toString(), "online") != 1) {
+        while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), "online") != 1) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -105,7 +106,9 @@ public class PlayerListener implements Listener {
             if (throwable != null) {
                 System.err.println(throwable.getStackTrace());
             }
-            plugin.getJedisPool().getResource().del(pl.getUniqueId().toString());
+            try (Jedis j = plugin.getJedisPool().getResource()) {
+                j.del("status." + pl.getUniqueId().toString());
+            }
         });
 
         plugin.remPlayer(plugin.getPlayer(pl));

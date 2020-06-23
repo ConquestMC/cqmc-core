@@ -15,8 +15,4 @@ public class Statistic {
         this.name = name;
         this.value = value;
     }
-
-    public Statistic() {
-        //Bean Mapper
-    }
 }

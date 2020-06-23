@@ -21,7 +21,6 @@ public class SimpleScoreboard {
     private Queue<Runnable> processQueue = Lists.newLinkedList();
 
     public SimpleScoreboard(String displayName) {
-        System.out.println("Called");
         this.scoreboard = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("main", "dummy");
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);

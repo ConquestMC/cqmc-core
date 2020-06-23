@@ -5,6 +5,7 @@ import com.conquestmc.core.friends.FriendRequest;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -42,6 +43,8 @@ public class ConquestPlayer {
     private List<UUID> friends = Lists.newArrayList();
 
     private Set<Statistic> statistics = new HashSet<>();
+
+    private Set<Trophy> trophies = Sets.newHashSet();
 
     private Rank prefixedRank;
 
