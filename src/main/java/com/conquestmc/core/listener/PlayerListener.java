@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import redis.clients.jedis.Jedis;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
@@ -41,13 +42,22 @@ public class PlayerListener implements Listener {
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), "online") != 1) {
+        while (!plugin.getJedisPool().getResource().get("status." + uuid.toString()).equals(String.valueOf(Bukkit.getServer().getPort()))
+                || plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), String.valueOf(Bukkit.getServer().getPort())) != 1) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+        /*while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), ) != 1) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
 
         plugin.getPlayerManager().getOrInitPromise(uuid).whenComplete(((conquestPlayer, throwable) -> {
             if (throwable != null) {
@@ -104,7 +114,7 @@ public class PlayerListener implements Listener {
 
         plugin.getPlayerManager().updatePlayer(pl.getUniqueId()).whenComplete((b, throwable) -> {
             if (throwable != null) {
-                System.err.println(throwable.getStackTrace());
+                System.err.println(Arrays.toString(throwable.getStackTrace()));
             }
             try (Jedis j = plugin.getJedisPool().getResource()) {
                 j.del("status." + pl.getUniqueId().toString());

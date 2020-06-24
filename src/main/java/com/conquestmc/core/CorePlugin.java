@@ -6,6 +6,7 @@ import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.friends.FriendListener;
 import com.conquestmc.core.friends.FriendRequestListener;
 import com.conquestmc.core.listener.PlayerListener;
+import com.conquestmc.core.listener.RedisLockListener;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.player.PlayerManager;
 import com.conquestmc.core.player.RankManager;
@@ -91,6 +92,8 @@ public class CorePlugin extends JavaPlugin {
         getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
         getCommand("hub").setExecutor(new HubCommand(this));
         getCommand("demote").setExecutor(new DemoteCommand());
+
+        new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"));
 
         registerListeners();
         registerChannelListeners();
