@@ -93,7 +93,7 @@ public class CorePlugin extends JavaPlugin {
         getCommand("hub").setExecutor(new HubCommand(this));
         getCommand("demote").setExecutor(new DemoteCommand());
 
-        new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"));
+        new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"), "redis").start();
 
         registerListeners();
         registerChannelListeners();

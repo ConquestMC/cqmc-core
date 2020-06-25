@@ -59,6 +59,7 @@ public class PlayerManager {
 
     public CompletableFuture<Boolean> updatePlayer(UUID uuid) {
         CompletableFuture<Boolean> promise = new CompletableFuture<>();
+        System.out.println(players.get(uuid).getMongoObject() == null);
         playerCollection.findOneAndReplace(eq("uuid", uuid.toString()), players.get(uuid).getMongoObject(), ((document, throwable) -> {
             if (throwable != null) {
                 System.err.println(throwable);

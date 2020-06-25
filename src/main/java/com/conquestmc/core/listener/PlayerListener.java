@@ -42,8 +42,7 @@ public class PlayerListener implements Listener {
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        while (!plugin.getJedisPool().getResource().get("status." + uuid.toString()).equals(String.valueOf(Bukkit.getServer().getPort()))
-                || plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), String.valueOf(Bukkit.getServer().getPort())) != 1) {
+        while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), "online") != 1) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
