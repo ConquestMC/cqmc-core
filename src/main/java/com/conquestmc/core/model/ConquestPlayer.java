@@ -54,7 +54,6 @@ public class ConquestPlayer {
         this.uuid = uuid;
         JsonObject jsonObject = new JsonParser().parse(object.toJson()).getAsJsonObject();
         JsonArray array = jsonObject.getAsJsonArray("ranks");
-        JsonArray cosmetics = jsonObject.getAsJsonArray("cosmetics");
 
         for (JsonElement element : array) {
             String name = element.getAsString();
@@ -71,9 +70,13 @@ public class ConquestPlayer {
             this.prefixedRank = ranks.get(0);
         }
 
-        for (JsonElement element : cosmetics) {
-            String name = element.getAsString();
-            this.cosmetics.add(name);
+        if (jsonObject.get("cosmetics") != null) {
+            JsonArray cosmetics = jsonObject.getAsJsonArray("cosmetics");
+
+            for (JsonElement element : cosmetics) {
+                String name = element.getAsString();
+                this.cosmetics.add(name);
+            }
         }
 
         this.knownName = (String) object.get("knownName");

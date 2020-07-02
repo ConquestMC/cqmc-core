@@ -8,12 +8,14 @@ import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 
 public class PlayerManager {
 
@@ -109,7 +111,13 @@ public class PlayerManager {
     }
 
     public void removePermissions(Player player) {
-        PermissionAttachment attachment = this.permissionAttachments.get(player.getUniqueId());
-        player.removeAttachment(attachment);
+        PermissionAttachment attachment = null;
+        for (PermissionAttachmentInfo info : player.getEffectivePermissions()) {
+            if (info.getAttachment().getPlugin() instanceof CorePlugin) {
+                attachment = info.getAttachment();
+            }
+        }
+        if (attachment != null)
+            player.removeAttachment(attachment);
     }
 }
