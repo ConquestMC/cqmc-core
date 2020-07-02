@@ -29,6 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -145,18 +146,18 @@ public class CorePlugin extends JavaPlugin {
         }
     }
 
-    public Document findPlayer(UUID uuid) {
+    public CompletableFuture<Document> findPlayer(UUID uuid) {
         CompletableFuture<Document> promise = new CompletableFuture<>();
-        getPlayerCollection().find(eq("uuid", uuid.toString())).first((d, throwable) -> {
-            promise.complete(d);
-        });
 
-        try {
-            return promise.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+        getPlayerCollection().find(eq("uuid", uuid.toString())).first((d, throwable) -> {
+            if (throwable != null) {
+                System.err.println(throwable.toString());
+            }
+            else {
+                promise.complete(d);
+            }
+        });
+        return promise;
     }
 
     public boolean isPlayerOnNetwork(String name) {

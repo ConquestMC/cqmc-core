@@ -51,8 +51,7 @@ public class FriendCommand implements CommandExecutor {
             }
 
             plugin.getPlayer(pl).sendFriendRequest(args[1]);
-        }
-        else if (args[0].equalsIgnoreCase("del") || args[0].equalsIgnoreCase("delete")) {
+        } else if (args[0].equalsIgnoreCase("del") || args[0].equalsIgnoreCase("delete")) {
             if (args.length != 2) {
                 pl.sendMessage(ChatColor.RED + "/f delete [player]");
             }
@@ -64,17 +63,20 @@ public class FriendCommand implements CommandExecutor {
             }
             send.getFriends().remove(target.getUniqueId());
             pl.sendMessage(ChatColor.AQUA + ChatColor.BOLD.toString() + "Friends >> " + ChatColor.GREEN + " removed " + ChatColor.GRAY + args[1] + ChatColor.GREEN + " from your friends list!");
-        }
-        else if (args[0].equalsIgnoreCase("list")) {
+        } else if (args[0].equalsIgnoreCase("list")) {
             ConquestPlayer player = plugin.getPlayer(pl);
             Inventory inv = Bukkit.createInventory(null, InventoryType.CHEST, "Your Friends");
 
             for (UUID uuid : player.getFriends()) {
-                Document playerDoc = plugin.findPlayer(uuid);
-                String name = playerDoc.getString("knownName");
-                String display = plugin.isPlayerOnNetwork(name) ? ChatColor.GREEN + name : ChatColor.RED + name;
-                ItemStack skull = new SkullMaker().withOwner(name).withName(display).build();
-                inv.addItem(skull);
+                plugin.findPlayer(uuid).whenComplete((d, err) -> {
+                    if (err != null) {
+                        System.err.println(err.toString());
+                    }
+                    String name = d.getString("knownName");
+                    String display = plugin.isPlayerOnNetwork(name) ? ChatColor.GREEN + name : ChatColor.RED + name;
+                    ItemStack skull = new SkullMaker().withOwner(name).withName(display).build();
+                    inv.addItem(skull);
+                });
             }
 
             pl.openInventory(inv);
@@ -97,8 +99,7 @@ public class FriendCommand implements CommandExecutor {
 
             toDecline.changeStatus("declined");
             plugin.getPlayer(pl).removeFriendRequest(pl.getName());
-        }
-        else if (args[0].equalsIgnoreCase("accept")) {
+        } else if (args[0].equalsIgnoreCase("accept")) {
             System.out.println(args.toString());
             if (args.length != 2) {
                 pl.sendMessage(ChatColor.RED + "/f accept [from]");
