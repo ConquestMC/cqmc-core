@@ -113,6 +113,8 @@ public class PlayerManager {
     public void removePermissions(Player player) {
         PermissionAttachment attachment = null;
         for (PermissionAttachmentInfo info : player.getEffectivePermissions()) {
+            if (info.getAttachment() == null || info.getAttachment().getPlugin() == null)
+                continue;
             if (info.getAttachment().getPlugin() instanceof CorePlugin) {
                 attachment = info.getAttachment();
             }
