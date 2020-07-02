@@ -120,7 +120,7 @@ public class CorePlugin extends JavaPlugin {
 
     public List<String> getOnlinePlayerNames() {
         try (Jedis j = getJedisPool().getResource()) {
-            List<String> onlinePlayerNames= j.lrange("players", 0, -1);
+            List<String> onlinePlayerNames = j.lrange("players", 0, -1);
             return onlinePlayerNames;
         }
     }
@@ -133,15 +133,15 @@ public class CorePlugin extends JavaPlugin {
         }, "redisListener").start();
     }
 
-    public void logPlayer(ConquestPlayer player) {
+    public void logPlayer(Player player) {
         try (Jedis j = getJedisPool().getResource()) {
-            j.lpush("players", player.getKnownName());
+            j.lpush("players", player.getName());
         }
     }
 
-    public void remPlayer(ConquestPlayer player) {
+    public void remPlayer(Player player) {
         try (Jedis j = getJedisPool().getResource()) {
-            j.lrem("players", 1, player.getKnownName());
+            j.lrem("players", 1, player.getName());
         }
     }
 

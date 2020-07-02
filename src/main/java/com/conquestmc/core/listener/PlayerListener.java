@@ -103,6 +103,7 @@ public class PlayerListener implements Listener {
                 }
             }
             plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
+            plugin.logPlayer(p);
         });
     }
 
@@ -120,7 +121,7 @@ public class PlayerListener implements Listener {
             }
         });
 
-        plugin.remPlayer(plugin.getPlayer(pl));
+        plugin.remPlayer(pl);
         plugin.getPlayerManager().removePermissions(pl);
         plugin.getPlayerManager().removePlayer(pl.getUniqueId());
     }
