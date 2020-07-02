@@ -42,12 +42,19 @@ public class PlayerListener implements Listener {
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         UUID uuid = event.getUniqueId();
 
-        while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), "online") != 1) {
+        int slept = 0;
+        while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), "online") != 1 && slept < 15) {
             try {
                 Thread.sleep(10);
+                slept++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (slept == 15) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Could not load player data! Contact an administrator.");
+            return;
         }
 
         /*while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), ) != 1) {
