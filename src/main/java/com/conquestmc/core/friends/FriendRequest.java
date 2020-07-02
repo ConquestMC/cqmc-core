@@ -2,6 +2,7 @@ package com.conquestmc.core.friends;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.util.OldSounds;
 import com.google.gson.JsonObject;
 import lombok.Data;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -73,7 +74,7 @@ public class FriendRequest {
             msg.addExtra(middle);
             msg.addExtra(declineComp);
             target.spigot().sendMessage(msg);
-            target.playSound(target.getLocation(), Sound.LEVEL_UP, 1, 1);
+            target.playSound(target.getLocation(), OldSounds.LEVEL_UP.playSound(), 1, 1);
             this.setToUUID(target.getUniqueId());
         }
         else {
