@@ -42,6 +42,8 @@ public class ConquestPlayer {
     private List<FriendRequest> friendRequests = Lists.newArrayList();
     private List<UUID> friends = Lists.newArrayList();
 
+    private Set<String> cosmetics = Sets.newHashSet();
+
     private Set<Statistic> statistics = new HashSet<>();
 
     private Set<Trophy> trophies = Sets.newHashSet();
@@ -52,6 +54,7 @@ public class ConquestPlayer {
         this.uuid = uuid;
         JsonObject jsonObject = new JsonParser().parse(object.toJson()).getAsJsonObject();
         JsonArray array = jsonObject.getAsJsonArray("ranks");
+        JsonArray cosmetics = jsonObject.getAsJsonArray("cosmetics");
 
         for (JsonElement element : array) {
             String name = element.getAsString();
@@ -66,6 +69,11 @@ public class ConquestPlayer {
 
         if (prefixedRank == null) {
             this.prefixedRank = ranks.get(0);
+        }
+
+        for (JsonElement element : cosmetics) {
+            String name = element.getAsString();
+            this.cosmetics.add(name);
         }
 
         this.knownName = (String) object.get("knownName");
@@ -161,6 +169,13 @@ public class ConquestPlayer {
         return null;
     }
 
+    public void unlockCosmetic(String id) {
+        this.cosmetics.add(id);
+    }
+
+    public boolean isCosmeticUnlocked(String id) {
+        return this.cosmetics.contains(id);
+    }
 
     public Player getBukkitPlayer() {
         return Bukkit.getPlayer(uuid);
@@ -194,10 +209,12 @@ public class ConquestPlayer {
                 .append("coins", coins)
                 .append("points", points)
                 .append("friendRequests", friendRequests)
-                .append("friends", friends.stream().map(f -> new BasicDBObject("_id", f.toString())).collect(Collectors.toList()));
+                .append("friends", friends.stream().map(f -> new BasicDBObject("_id", f.toString())).collect(Collectors.toList()))
+                .append("cosmetics", this.cosmetics);
 
         return object;
     }
+
 
     public SimpleScoreboard getCurrentScoreboard() {
         return currentScoreboard;
