@@ -15,6 +15,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import lombok.Data;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,6 +53,11 @@ public class ConquestPlayer {
     private Set<Trophy> trophies = Sets.newHashSet();
 
     private Rank prefixedRank;
+
+    @Getter @Setter
+    private String selectedTrail = "";
+    @Getter @Setter
+    private String selectedGadget = "";
 
     public ConquestPlayer(UUID uuid, Document object) {
         this.uuid = uuid;
@@ -97,6 +104,14 @@ public class ConquestPlayer {
 
         if (object.get("selectedCage") != null) {
             this.selectedCage = object.getString("selectedCage");
+        }
+
+        if (object.get("selectedTrail") != null) {
+            this.selectedTrail = object.getString("selectedTrail");
+        }
+
+        if (object.get("selectedGadget") != null) {
+            this.selectedGadget = object.getString("selectedGadget");
         }
     }
 
@@ -220,7 +235,9 @@ public class ConquestPlayer {
                 .append("friendRequests", friendRequests)
                 .append("friends", friends.stream().map(f -> new BasicDBObject("_id", f.toString())).collect(Collectors.toList()))
                 .append("cosmetics", this.cosmetics)
-                .append("selectedCage", this.getSelectedCage());
+                .append("selectedCage", this.getSelectedCage())
+                .append("selectedTrail", getSelectedTrail())
+                .append("selectedGadget", getSelectedGadget());
 
         return object;
     }
