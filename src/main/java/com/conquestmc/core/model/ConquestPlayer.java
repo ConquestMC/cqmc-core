@@ -37,6 +37,8 @@ public class ConquestPlayer {
     private int coins;
     private long points;
 
+    private String selectedCage = "";
+
     private SimpleScoreboard currentScoreboard;
 
     private List<FriendRequest> friendRequests = Lists.newArrayList();
@@ -91,6 +93,10 @@ public class ConquestPlayer {
         for (Document obj : (List<Document>) object.get("friends")) {
             UUID friend = UUID.fromString(String.valueOf(obj.get("_id")));
             this.friends.add(friend);
+        }
+
+        if (object.get("selectedCage") != null) {
+            this.selectedCage = object.getString("selectedCage");
         }
     }
 
@@ -213,7 +219,8 @@ public class ConquestPlayer {
                 .append("points", points)
                 .append("friendRequests", friendRequests)
                 .append("friends", friends.stream().map(f -> new BasicDBObject("_id", f.toString())).collect(Collectors.toList()))
-                .append("cosmetics", this.cosmetics);
+                .append("cosmetics", this.cosmetics)
+                .append("selectedCage", this.getSelectedCage());
 
         return object;
     }
@@ -225,6 +232,14 @@ public class ConquestPlayer {
 
     public void setCurrentScoreboard(SimpleScoreboard scoreboard) {
         this.currentScoreboard = scoreboard;
+    }
+
+    public void setSelectedCage(String cage) {
+        this.selectedCage = cage;
+    }
+
+    public String getSelectedCage() {
+        return this.selectedCage;
     }
 
     public boolean hasRank(Rank rank) {
