@@ -123,9 +123,11 @@ public class PlayerListener implements Listener {
             if (throwable != null) {
                 System.err.println(Arrays.toString(throwable.getStackTrace()));
             }
-            try (Jedis j = plugin.getJedisPool().getResource()) {
-                j.del("status." + pl.getUniqueId().toString());
-            }
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try (Jedis j = plugin.getJedisPool().getResource()) {
+                    j.del("status." + pl.getUniqueId().toString());
+                }
+            });
         });
 
         plugin.remPlayer(pl);

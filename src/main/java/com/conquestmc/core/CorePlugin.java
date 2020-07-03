@@ -15,6 +15,7 @@ import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
 import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.rest.PlayerRestfulService;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
@@ -25,9 +26,9 @@ import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.print.Doc;
 import java.util.List;
@@ -69,13 +70,17 @@ public class CorePlugin extends JavaPlugin {
     @Getter
     private RankManager rankManager;
 
+    List<String> onlinePlayers = Lists.newArrayList();
+
     @Override
     public void onEnable() {
         instance = this;
         serverConfigManager.init();
         this.serverConfig = serverConfigManager.getConfig();
 
-        this.jedisPool = new JedisPool();
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(128);
+        this.jedisPool = new JedisPool(config);
 
         this.mongoClient = MongoClients.create();
         this.playerDatabase = mongoClient.getDatabase("conquest");
@@ -84,7 +89,6 @@ public class CorePlugin extends JavaPlugin {
 
         this.rankManager = new RankManager();
         this.playerManager = new PlayerManager(playerCollection);
-
 
         getCommand("gamemode").setExecutor(new GameModeCommand());
         getCommand("giverank").setExecutor(new RankCommand(this));
@@ -120,10 +124,12 @@ public class CorePlugin extends JavaPlugin {
     }
 
     public List<String> getOnlinePlayerNames() {
-        try (Jedis j = getJedisPool().getResource()) {
-            List<String> onlinePlayerNames = j.lrange("players", 0, -1);
-            return onlinePlayerNames;
-        }
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            try (Jedis j = getJedisPool().getResource()) {
+                onlinePlayers = j.lrange("players", 0, -1);
+            }
+        });
+        return onlinePlayers;
     }
 
     public void registerChannelListeners() {
@@ -135,15 +141,19 @@ public class CorePlugin extends JavaPlugin {
     }
 
     public void logPlayer(Player player) {
-        try (Jedis j = getJedisPool().getResource()) {
-            j.lpush("players", player.getName());
-        }
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            try (Jedis j = getJedisPool().getResource()) {
+                j.lpush("players", player.getName());
+            }
+        });
     }
 
     public void remPlayer(Player player) {
-        try (Jedis j = getJedisPool().getResource()) {
-            j.lrem("players", 1, player.getName());
-        }
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            try (Jedis j = getJedisPool().getResource()) {
+                j.lrem("players", 1, player.getName());
+            }
+        });
     }
 
     public CompletableFuture<Document> findPlayer(UUID uuid) {

@@ -4,6 +4,7 @@ import com.conquestmc.core.CorePlugin;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -25,9 +26,11 @@ public class RedisLockListener extends JedisPubSub {
                 return;
             }
             plugin.getPlayerManager().updatePlayer(uuid).whenComplete((doc, throwable) -> {
-                try (Jedis j = plugin.getJedisPool().getResource()) {
-                    j.del("status." + uuid);
-                }
+                Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                    try (Jedis j = plugin.getJedisPool().getResource()) {
+                        j.del("status." + uuid);
+                    }
+                });
             });
         }
     }
