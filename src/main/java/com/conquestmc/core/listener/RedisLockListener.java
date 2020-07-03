@@ -1,7 +1,6 @@
 package com.conquestmc.core.listener;
 
 import com.conquestmc.core.CorePlugin;
-import com.conquestmc.core.player.PlayerManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
