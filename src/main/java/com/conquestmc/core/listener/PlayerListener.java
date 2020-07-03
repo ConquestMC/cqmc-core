@@ -117,6 +117,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player pl = event.getPlayer();
+        event.setQuitMessage("");
         //plugin.getPlayerManager().pushPlayer(pl.getUniqueId());
 
         plugin.getPlayerManager().updatePlayer(pl.getUniqueId()).whenComplete((b, throwable) -> {

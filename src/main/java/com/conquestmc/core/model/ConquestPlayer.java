@@ -54,6 +54,9 @@ public class ConquestPlayer {
 
     private Rank prefixedRank;
 
+    private int coinsEarned = 0;
+    private int pointsEarned = 0;
+
     @Getter @Setter
     private String selectedTrail = "";
     @Getter @Setter
@@ -92,8 +95,14 @@ public class ConquestPlayer {
         this.coins = (int) object.get("coins");
         this.points = (long) object.get("points");
 
-        for (Document stat : (List<Document>) object.get("stats")) {
-            Statistic statistic = new Statistic((String) stat.get("name"), (int) stat.get("value"));
+        JsonArray stats = jsonObject.getAsJsonArray("stats");
+
+        for (JsonElement stat : stats) {
+            JsonObject obj = stat.getAsJsonObject();
+            String name = obj.get("name").getAsString();
+            int value = obj.get("value").getAsInt();
+
+            Statistic statistic = new Statistic(name, value);
             this.statistics.add(statistic);
         }
 
@@ -112,6 +121,19 @@ public class ConquestPlayer {
 
         if (object.get("selectedGadget") != null) {
             this.selectedGadget = object.getString("selectedGadget");
+        }
+
+        if (getStatistic("Kills") == null) {
+            Statistic kills = new Statistic("Kills", 0);
+            this.statistics.add(kills);
+        }
+        if (getStatistic("Deaths") == null) {
+            Statistic deaths = new Statistic("Deaths", 0);
+            this.statistics.add(deaths);
+        }
+        if (getStatistic("Wins") == null) {
+            Statistic wins = new Statistic("Wins", 0);
+            this.statistics.add(wins);
         }
     }
 
@@ -140,6 +162,21 @@ public class ConquestPlayer {
         if (rem != null) {
             this.getFriendRequests().remove(rem);
         }
+    }
+
+    public void addPointsEarned(int points) {
+        this.pointsEarned += points;
+    }
+    public void addCoinsEarned(int coinsEarned) {
+        this.coinsEarned += coinsEarned;
+    }
+
+    public int getPointsEarned() {
+        return pointsEarned;
+    }
+
+    public int getCoinsEarned() {
+        return coinsEarned;
     }
 
     public List<FriendRequest> getIncomingFriendRequests() {

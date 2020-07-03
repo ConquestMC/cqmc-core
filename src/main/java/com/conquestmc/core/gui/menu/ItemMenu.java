@@ -99,6 +99,9 @@ public class ItemMenu implements Listener {
     public void regenerate() {
         inv = Bukkit.createInventory(player, getSize(), title);
         for (int i = 0; i < items.size(); i++) {
+            if (items.get(i) == null)
+                continue;
+
             inv.setItem(i, items.get(i).getItem().get());
         }
     }
