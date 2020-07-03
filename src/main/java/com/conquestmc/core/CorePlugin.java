@@ -93,6 +93,7 @@ public class CorePlugin extends JavaPlugin {
         getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
         getCommand("hub").setExecutor(new HubCommand(this));
         getCommand("demote").setExecutor(new DemoteCommand());
+        getCommand("givecosmetic").setExecutor(new CosmeticCommand(this));
 
         new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"), "redis").start();
 

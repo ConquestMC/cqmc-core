@@ -5,7 +5,6 @@ import com.conquestmc.core.friends.FriendRequest;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.util.SkullMaker;
 import lombok.RequiredArgsConstructor;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
