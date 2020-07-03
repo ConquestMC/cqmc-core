@@ -26,6 +26,8 @@ commands:
     description: "hub command"
   demote:
     description: "demotes a user from their staff rank"
+  givecosmetic:
+    description: "Give a cosmetic to a player"
 permissions:
   core.gamemode:
     description: "gamemode perm"
