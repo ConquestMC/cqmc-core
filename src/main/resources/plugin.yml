@@ -28,6 +28,8 @@ commands:
     description: "demotes a user from their staff rank"
   givecosmetic:
     description: "Give a cosmetic to a player"
+  drachma:
+    description: "Command to manage drachma"
 permissions:
   core.gamemode:
     description: "gamemode perm"
@@ -37,3 +39,5 @@ permissions:
     description: "Punish perm"
   staff.ph:
     description: "Punish history perm"
+  group.admin:
+    description: "Admin perm"
