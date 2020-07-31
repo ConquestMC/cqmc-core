@@ -5,6 +5,7 @@ import com.conquestmc.core.friends.FriendRequest;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -23,10 +24,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -56,6 +54,8 @@ public class ConquestPlayer {
 
     private int coinsEarned = 0;
     private int pointsEarned = 0;
+
+    private Map<String, Object> playerSettings = Maps.newHashMap();
 
     @Getter @Setter
     private String selectedTrail = "";
@@ -162,6 +162,10 @@ public class ConquestPlayer {
         if (rem != null) {
             this.getFriendRequests().remove(rem);
         }
+    }
+
+    public boolean isVanished() {
+        return (boolean) playerSettings.getOrDefault("vanished", false);
     }
 
     public void addPointsEarned(int points) {

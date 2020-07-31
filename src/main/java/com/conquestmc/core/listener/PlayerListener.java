@@ -147,4 +147,18 @@ public class PlayerListener implements Listener {
         String format = prefix + ChatColor.YELLOW + player.getName() + " " + chat;
         event.setFormat(format);
     }
+
+    @EventHandler
+    public void onVanishJoin(PlayerJoinEvent event) {
+        plugin.getPlayerManager().getOrInitPromise(event.getPlayer().getUniqueId()).whenComplete(((conquestPlayer, throwable) -> {
+            if (conquestPlayer.isVanished()) {
+
+                for (Player pl : Bukkit.getOnlinePlayers()) {
+                    if (!pl.hasPermission("group.admin")) {
+                        pl.hidePlayer(event.getPlayer());
+                    }
+                }
+            }
+        }));
+    }
 }

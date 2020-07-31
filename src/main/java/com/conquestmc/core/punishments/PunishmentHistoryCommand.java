@@ -51,7 +51,7 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                         mat = Material.GOLD_SWORD;
                     }
                     else if (p.getType() == PunishmentType.CHAT) {
-                        mat = Material.FLINT_AND_STEEL;
+                        mat = Material.BOOK_AND_QUILL;
                     }
                     else {
                         mat = Material.PAPER;
