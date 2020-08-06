@@ -30,6 +30,8 @@ commands:
     description: "Give a cosmetic to a player"
   drachma:
     description: "Command to manage drachma"
+  speed:
+    description: "Changes flight and walking speed"
 permissions:
   core.gamemode:
     description: "gamemode perm"

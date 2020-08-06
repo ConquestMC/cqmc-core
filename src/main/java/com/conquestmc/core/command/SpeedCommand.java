@@ -17,7 +17,7 @@ public class SpeedCommand implements CommandExecutor {
 
         Player player = (Player) commandSender;
 
-        if (!player.hasPermission("core.speed")) {
+        if (!player.hasPermission("group.admin")) {
             player.sendMessage(ChatColor.RED + "You do not have permission to do this!");
             return true;
         }

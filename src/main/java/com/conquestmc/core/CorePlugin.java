@@ -7,6 +7,7 @@ import com.conquestmc.core.friends.FriendListener;
 import com.conquestmc.core.friends.FriendRequestListener;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.listener.RedisLockListener;
+import com.conquestmc.core.listener.SignListener;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.player.PlayerManager;
 import com.conquestmc.core.player.RankManager;
@@ -30,12 +31,10 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -99,6 +98,7 @@ public class CorePlugin extends JavaPlugin {
         getCommand("demote").setExecutor(new DemoteCommand());
         getCommand("givecosmetic").setExecutor(new CosmeticCommand(this));
         getCommand("drachma").setExecutor(new DrachmaCommand(this));
+        getCommand("speed").setExecutor(new SpeedCommand());
 
         new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"), "redis").start();
 
@@ -115,6 +115,7 @@ public class CorePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new FriendListener(), this);
         getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
+        getServer().getPluginManager().registerEvents(new SignListener(), this);
     }
 
     public ConquestPlayer getPlayer(Player player) {
