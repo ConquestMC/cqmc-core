@@ -79,8 +79,7 @@ public class PlayerListener implements Listener {
         TextComponent prefix = new TextComponent(player.getPrefixedRank().getName().equalsIgnoreCase("none") ? "" : player.getPrefixedRank().getPrefix());
         TextComponent username = new TextComponent(ChatColor.translateAlternateColorCodes('&', player.getNameColor() + name));
         TextComponent split = new TextComponent(" | ");
-        TextComponent msg = new TextComponent(ChatColor.translateAlternateColorCodes('&',
-                player.getPrefixedRank().getName().equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
+        TextComponent msg = new TextComponent(ChatColor.translateAlternateColorCodes('&', player.getPrefixedRank().getName().equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
 
         prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(player.getPrefixedRank().getPrefix() + "\n" + getStaffOnHover(player)).create()));
         username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(

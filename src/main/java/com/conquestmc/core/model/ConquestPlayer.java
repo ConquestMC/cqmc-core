@@ -271,7 +271,7 @@ public class ConquestPlayer {
 
         Document object = new Document("uuid", getUuid().toString())
                 .append("knownName", getKnownName())
-                .append("namecolor", getNameColor())
+                .append("nameColor", getNameColor())
                 .append("stats", stats)
                 .append("ranks", rankNames)
                 .append("coins", coins)
