@@ -32,6 +32,7 @@ public class ConquestPlayer {
 
     private UUID uuid;
     private String knownName;
+    private String nameColor;
 
     private List<Rank> ranks = Lists.newArrayList();
     private int coins;
@@ -92,6 +93,7 @@ public class ConquestPlayer {
         }
 
         this.knownName = (String) object.get("knownName");
+        this.nameColor = (String) object.get("nameColor");
         this.coins = (int) object.get("coins");
         this.points = (long) object.get("points");
 
@@ -269,6 +271,7 @@ public class ConquestPlayer {
 
         Document object = new Document("uuid", getUuid().toString())
                 .append("knownName", getKnownName())
+                .append("namecolor", getNameColor())
                 .append("stats", stats)
                 .append("ranks", rankNames)
                 .append("coins", coins)
