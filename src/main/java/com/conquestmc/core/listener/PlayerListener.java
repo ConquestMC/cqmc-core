@@ -112,8 +112,6 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         event.setJoinMessage("");
-        p.playSound(p.getLocation(), OldSounds.LEVEL_UP.playSound(),1,1);
-        p.playSound(p.getLocation(), OldSounds.NOTE_BASS.playSound(),1,1);
 
         plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
             newConquestPlayer.setKnownName(p.getName());
