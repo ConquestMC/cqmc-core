@@ -24,5 +24,6 @@
     <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver-async:3.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:bson:3.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver-core:3.9.0" level="project" />
+    <orderEntry type="library" name="spigot-1.8.5-R0.1-SNAPSHOT-latest" level="project" />
   </component>
 </module>

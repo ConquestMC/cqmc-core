@@ -6,6 +6,7 @@ import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.player.DonationRank;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
+import com.conquestmc.core.util.OldSounds;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -111,6 +112,8 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         event.setJoinMessage("");
+        p.playSound(p.getLocation(), OldSounds.LEVEL_UP.playSound(),1,1);
+        p.playSound(p.getLocation(), OldSounds.NOTE_BASS.playSound(),1,1);
 
         plugin.getPlayerManager().getOrInitPromise(p.getUniqueId()).whenComplete((newConquestPlayer, e) -> {
             newConquestPlayer.setKnownName(p.getName());
@@ -118,9 +121,9 @@ public class PlayerListener implements Listener {
                 String[] arr = new String[rank.getPermissions().size()];
                 plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
             }
-
             Rank prefixed = newConquestPlayer.getPrefixedRank();
             String nameColor = newConquestPlayer.getNameColor();
+            p.setPlayerListName(ChatColor.translateAlternateColorCodes('&', prefixed.getPrefix() + " " + nameColor + p.getName() + "   "));
 
             if (prefixed instanceof StaffRank) {
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[0]
