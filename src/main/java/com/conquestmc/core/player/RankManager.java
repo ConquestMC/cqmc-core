@@ -11,6 +11,7 @@ public class RankManager {
 
     public RankManager() {
         Rank none = new Rank("none");
+        none.addPermissions("group.default");
         Rank knight = new DonationRank("knight");
         knight.setPrefix("&bKnight");
         Rank duke = new DonationRank("duke");

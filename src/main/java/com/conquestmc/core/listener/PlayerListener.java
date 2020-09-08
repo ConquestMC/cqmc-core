@@ -111,6 +111,7 @@ public class PlayerListener implements Listener {
             }
             plugin.getPlayerManager().getPlayers().put(p.getUniqueId(), newConquestPlayer);
             plugin.logPlayer(p);
+            System.out.println(p.hasPermission("group.default"));
         });
     }
 
