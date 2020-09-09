@@ -104,6 +104,7 @@ public class CorePlugin extends JavaPlugin {
 
         registerListeners();
         registerChannelListeners();
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @Override
