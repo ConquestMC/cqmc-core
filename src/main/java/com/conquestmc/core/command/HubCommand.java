@@ -1,10 +1,10 @@
 package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
+import com.conquestmc.core.util.ChatUtil;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 public class HubCommand implements CommandExecutor {
 
     private final CorePlugin plugin;
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (!(commandSender instanceof Player)) {
@@ -22,7 +23,7 @@ public class HubCommand implements CommandExecutor {
         }
 
         Player player = (Player) commandSender;
-        player.sendMessage(ChatColor.GOLD + "A trusty steed will escort you to hub...");
+        player.sendMessage(ChatUtil.color("&eA trusty steed will escort you to hub..."));
         sendPlayerToLobby(player);
         return true;
     }

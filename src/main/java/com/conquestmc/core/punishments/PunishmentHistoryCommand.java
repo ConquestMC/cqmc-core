@@ -1,5 +1,6 @@
 package com.conquestmc.core.punishments;
 
+import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.core.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.WordUtils;
@@ -35,7 +36,7 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                 Player player = Bukkit.getPlayer(playerName);
 
                 if (player == null) {
-                    sender.sendMessage(ChatColor.RED + "That player is not online at this time!");
+                    sender.sendMessage(ChatUtil.color("&cThat player is not online at this time!"));
                     return true;
                 }
 
@@ -61,11 +62,11 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                     ItemMeta meta = punishItem.getItemMeta();
                     meta.setDisplayName(ChatColor.AQUA + WordUtils.capitalizeFully(p.getType().name()));
                     meta.setLore(Arrays.asList(
-                            ChatColor.GOLD + "Date Issued: " + ChatColor.YELLOW + p.getIssued(),
-                            ChatColor.GOLD + "Severity: " + ChatColor.YELLOW + p.getSeverity(),
-                            ChatColor.GOLD + "Reason: " + ChatColor.YELLOW + "Coming soon.",
-                            ChatColor.GOLD + "Duration: " + ChatColor.YELLOW + TimeUtil.formatTimeToFormalDate(p.getActiveUntil()),
-                            ChatColor.GOLD + "Time Left: " + ChatColor.YELLOW + p.getTimeLeftVisual()
+                            ChatUtil.color("&6Date Issued: &e" + p.getIssued()),
+                            ChatUtil.color("&6Severity: &e" + p.getSeverity()),
+                            ChatUtil.color("&6Reason: &e" + "Coming soon."), //TODO replace placeholder
+                            ChatUtil.color("&6Duration: &e" + TimeUtil.formatTimeToFormalDate(p.getActiveUntil())),
+                            ChatUtil.color("&6Time Left: &e" + p.getTimeLeftVisual())
                     ));
                     punishItem.setItemMeta(meta);
                     inv.addItem(punishItem);

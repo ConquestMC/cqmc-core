@@ -4,6 +4,7 @@ import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.friends.FriendRequest;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
+import com.conquestmc.core.util.ChatUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -12,17 +13,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.BasicDBObject;
-
 import com.mongodb.DBObject;
 import lombok.Data;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,9 +55,11 @@ public class ConquestPlayer {
 
     private Map<String, Object> playerSettings = Maps.newHashMap();
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String selectedTrail = "";
-    @Getter @Setter
+    @Getter
+    @Setter
     private String selectedGadget = "";
 
     public ConquestPlayer(UUID uuid, Document object) {
@@ -173,6 +172,7 @@ public class ConquestPlayer {
     public void addPointsEarned(int points) {
         this.pointsEarned += points;
     }
+
     public void addCoinsEarned(int coinsEarned) {
         this.coinsEarned += coinsEarned;
     }
@@ -224,7 +224,7 @@ public class ConquestPlayer {
     }
 
     public void sendPointsAwardedMessage(int awarded) {
-        getBukkitPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You've earned " + ChatColor.RED + "" + ChatColor.BOLD + awarded + ChatColor.GOLD + "" + ChatColor.BOLD + " Conquest Points!");
+        getBukkitPlayer().sendMessage(ChatUtil.color("&6&lYou've earned &c&l" + awarded + " &6&lConquest Points!"));
     }
 
     public Statistic getStatistic(String name) {

@@ -12,8 +12,6 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 public class RedisLockListener extends JedisPubSub {
-
-
     private final CorePlugin plugin;
 
     @Override

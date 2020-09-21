@@ -1,6 +1,6 @@
 package com.conquestmc.core.command;
 
-import org.bukkit.ChatColor;
+import com.conquestmc.core.util.ChatUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,19 +11,19 @@ public class SpeedCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(ChatColor.RED + "This is a player only command!");
+            commandSender.sendMessage(ChatUtil.color("&cThis is a player only command!"));
             return true;
         }
 
         Player player = (Player) commandSender;
 
         if (!player.hasPermission("group.admin")) {
-            player.sendMessage(ChatColor.RED + "You do not have permission to do this!");
+            player.sendMessage(ChatUtil.color("&cYou do not have permission to do this!"));
             return true;
         }
 
         if (args.length != 1) {
-            player.sendMessage(ChatColor.RED + "/speed <speed>");
+            player.sendMessage(ChatUtil.color("&c/speed <speed>"));
         }
 
         try {
@@ -31,21 +31,20 @@ public class SpeedCommand implements CommandExecutor {
 
             if (player.isFlying()) {
                 player.setFlySpeed(speed);
-                player.sendMessage(ChatColor.GREEN + "Fly speed set to: " + speed);
+                player.sendMessage(ChatUtil.color("&aFly speed set to: &e" + speed));
                 return true;
             }
 
             if (player.isOnGround()) {
                 player.setWalkSpeed(speed);
-                player.sendMessage(ChatColor.GREEN + "Walking speed set to: " + speed);
+                player.sendMessage(ChatUtil.color("&aWalking speed set to: &e" + speed));
                 return true;
             }
 
         } catch (NumberFormatException e) {
-            player.sendMessage(ChatColor.RED + "Speed must be an integer");
+            player.sendMessage(ChatUtil.color("&cSpeed must be an integer"));
             return true;
         }
-
         return true;
     }
 }

@@ -71,6 +71,18 @@ public class CorePlugin extends JavaPlugin {
 
     List<String> onlinePlayers = Lists.newArrayList();
 
+    /*
+    Changelist:
+    - Created registerCommands() method in CorePlugin.java to clean up onEnable()
+    - Created ChatUtil which should now always be used to convert color codes
+    - Deleted ServerManager.java as it is empty and unused
+    - Deleted TrophyListener.java as it is empty and unused
+    - Deleted PardonCommand.java as it is empty and unused
+    - Updated and replaced all uses of ChatColor.translateAlternativeColorCodes() to ChatUtil.color for easier readability
+    - Marked all issues I saw that were not mentioned on this list as TODO and you should be able to find and fix easily.
+    - Fixed any server message's color code typos
+     */
+
     @Override
     public void onEnable() {
         instance = this;
@@ -89,16 +101,7 @@ public class CorePlugin extends JavaPlugin {
         this.rankManager = new RankManager();
         this.playerManager = new PlayerManager(playerCollection);
 
-        getCommand("gamemode").setExecutor(new GameModeCommand());
-        getCommand("giverank").setExecutor(new RankCommand(this));
-        getCommand("friend").setExecutor(new FriendCommand(this));
-        getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
-        getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
-        getCommand("hub").setExecutor(new HubCommand(this));
-        getCommand("demote").setExecutor(new DemoteCommand());
-        getCommand("givecosmetic").setExecutor(new CosmeticCommand(this));
-        getCommand("drachma").setExecutor(new DrachmaCommand(this));
-        getCommand("speed").setExecutor(new SpeedCommand());
+        registerCommands();
 
         new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"), "redis").start();
 
@@ -116,6 +119,19 @@ public class CorePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FriendListener(), this);
         getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
         getServer().getPluginManager().registerEvents(new SignListener(), this);
+    }
+
+    private void registerCommands() {
+        getCommand("gamemode").setExecutor(new GameModeCommand());
+        getCommand("giverank").setExecutor(new RankCommand(this));
+        getCommand("friend").setExecutor(new FriendCommand(this));
+        getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
+        getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
+        getCommand("hub").setExecutor(new HubCommand(this));
+        getCommand("demote").setExecutor(new DemoteCommand());
+        getCommand("givecosmetic").setExecutor(new CosmeticCommand(this));
+        getCommand("drachma").setExecutor(new DrachmaCommand(this));
+        getCommand("speed").setExecutor(new SpeedCommand());
     }
 
     public ConquestPlayer getPlayer(Player player) {

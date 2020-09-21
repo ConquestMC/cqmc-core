@@ -1,5 +1,6 @@
 package com.conquestmc.core.gui;
 
+import com.conquestmc.core.util.ChatUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -80,7 +81,7 @@ public class CustomItemStack {
 
         try {
             if (dbo.containsKey("name")) {
-                setName(ChatColor.translateAlternateColorCodes('&', (String) dbo.get("name")));
+                setName(ChatUtil.color((String) dbo.get("name")));
             }
 
             if (dbo.containsKey("typeid")) {
@@ -97,7 +98,7 @@ public class CustomItemStack {
 
             if (dbo.containsKey("lore")) {
                 for (Object loredbo : (JSONArray) dbo.get("lore")) {
-                    addLore(ChatColor.translateAlternateColorCodes('&', (String) loredbo));
+                    addLore(ChatUtil.color((String) loredbo));
                 }
             }
 

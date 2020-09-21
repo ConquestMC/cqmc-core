@@ -3,6 +3,7 @@ package com.conquestmc.core.command;
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
+import com.conquestmc.core.util.ChatUtil;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,12 +23,12 @@ public class RankCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!sender.hasPermission("core.setrank")) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to do this!");
+            sender.sendMessage(ChatUtil.color("&cYou do not have permission to do this!"));
             return true;
         }
 
         if (args.length != 2) {
-            sender.sendMessage(ChatColor.RED + "/giverank <user> <rank>");
+            sender.sendMessage(ChatUtil.color("&c/giverank <user> <rank>"));
             return true;
         }
 
@@ -37,25 +38,25 @@ public class RankCommand implements CommandExecutor {
         Player target = Bukkit.getPlayer(targetName);
 
         if (target == null) {
-            sender.sendMessage(ChatColor.RED + "Cannot find specified player!");
+            sender.sendMessage(ChatUtil.color("&cCannot find specified player!"));
             return true;
         }
 
         Rank rank = plugin.getRankManager().getRank(rankName.toLowerCase());
 
         if (rank == null) {
-            sender.sendMessage(ChatColor.RED + "Cannot find the rank specified!");
+            sender.sendMessage(ChatUtil.color("&cCannot find the rank specified!"));
             return true;
         }
 
         if (plugin.getPlayerManager().getConquestPlayer(target.getUniqueId()).hasRank(rank)) {
-            sender.sendMessage(ChatColor.RED + "The player already has this rank!");
+            sender.sendMessage(ChatUtil.color("&cThe player already has this rank!"));
             return true;
         }
 
         plugin.getPlayerManager().getConquestPlayer(target.getUniqueId()).getRanks().add(rank);
-        sender.sendMessage(ChatColor.GREEN + "You have given " + ChatColor.YELLOW + target.getName() + ChatColor.GREEN + " a new rank!");
-        target.sendMessage(ChatColor.GREEN + "You have been awarded the rank: " + ChatColor.translateAlternateColorCodes('&', rank instanceof StaffRank ? rank.getPrefix() : rank.getPrefix() + rank.getName()));
+        sender.sendMessage(ChatUtil.color("&aYou have given &e" + target.getName() + " &aa new rank!"));
+        target.sendMessage(ChatUtil.color("&aYou have been awarded the rank: ") + ChatColor.translateAlternateColorCodes('&', rank instanceof StaffRank ? rank.getPrefix() : rank.getPrefix() + rank.getName()));
 
         plugin.getPlayer(target).updatePrefixedRank();
         return true;

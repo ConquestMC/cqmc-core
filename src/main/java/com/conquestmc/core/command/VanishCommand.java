@@ -1,7 +1,7 @@
 package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
-import org.bukkit.ChatColor;
+import com.conquestmc.core.util.ChatUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,7 +31,7 @@ public class VanishCommand implements CommandExecutor {
             conquestPlayer.getPlayerSettings().put("vanished", true);
         }));
 
-        sender.sendMessage(ChatColor.GREEN + "you have been vanished!");
+        sender.sendMessage(ChatUtil.color("&ayou have been vanished!"));
 
         return false;
     }

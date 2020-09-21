@@ -2,9 +2,9 @@ package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.util.ChatUtil;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,7 +18,7 @@ public class DrachmaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!commandSender.hasPermission("group.admin")) {
-            commandSender.sendMessage(ChatColor.RED + "You do not have permission to do this!");
+            commandSender.sendMessage(ChatUtil.color("&cYou do not have permission to do this!"));
             return true;
         }
 
@@ -36,7 +36,7 @@ public class DrachmaCommand implements CommandExecutor {
             }
 
             if (Bukkit.getPlayer(userName) == null) {
-                commandSender.sendMessage(ChatColor.RED + "Player is not on this server!");
+                commandSender.sendMessage(ChatUtil.color("&cPlayer is not on this server!")); //todo shouldn't be handled like this, should just update the value stored in db if not online
                 return true;
             }
 
@@ -45,20 +45,16 @@ public class DrachmaCommand implements CommandExecutor {
 
             if (action.equalsIgnoreCase("set")) {
                 cp.setCoins(amount);
-            }
-            else if (action.equalsIgnoreCase("give")) {
+            } else if (action.equalsIgnoreCase("give")) {
                 cp.setCoins(cp.getCoins() + amount);
-            }
-            else if (action.equalsIgnoreCase("take")) {
+            } else if (action.equalsIgnoreCase("take")) {
                 cp.setCoins(cp.getCoins() - amount);
-            }
-            else {
+            } else {
                 return true;
             }
-            commandSender.sendMessage(ChatColor.GREEN + "Changed " + userName + "'s balance to: " + cp.getCoins());
-        }
-        else {
-            commandSender.sendMessage(ChatColor.RED + "/drachma set|give|take user amount");
+            commandSender.sendMessage(ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + cp.getCoins()));
+        } else {
+            commandSender.sendMessage(ChatUtil.color("&c/drachma set|give|take user amount"));
             return true;
         }
 

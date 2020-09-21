@@ -3,6 +3,7 @@ package com.conquestmc.core.command;
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.friends.FriendRequest;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.core.util.SkullMaker;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -31,37 +32,37 @@ public class FriendCommand implements CommandExecutor {
         Player pl = (Player) sender;
 
         if (args.length == 0) {
-            pl.sendMessage(ChatColor.AQUA + ChatColor.BOLD.toString() + "Friends >>");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends add [name]");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends accept [name]");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends decline [name]");
+            pl.sendMessage(ChatUtil.color("&b&lFriends >>"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends add [name]"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends accept [name]"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends decline [name]"));
 
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends del|delete [name]");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends list");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends requests");
-            pl.sendMessage(ChatColor.YELLOW + " - " + ChatColor.GRAY + "/friends on/off");
+            pl.sendMessage(ChatUtil.color("&e - &7/friends del|delete [name]"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends list"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends requests"));
+            pl.sendMessage(ChatUtil.color("&e - &7/friends on/off"));
             return true;
         }
         if (args[0].equalsIgnoreCase("add")) {
             if (args.length != 2) {
-                pl.sendMessage(ChatColor.RED + "/f add [player]");
+                pl.sendMessage(ChatUtil.color("&c/f add [player]"));
                 return true;
             }
 
             plugin.getPlayer(pl).sendFriendRequest(args[1]);
         } else if (args[0].equalsIgnoreCase("del") || args[0].equalsIgnoreCase("delete")) {
             if (args.length != 2) {
-                pl.sendMessage(ChatColor.RED + "/f delete [player]");
+                pl.sendMessage(ChatUtil.color("&c/f delete [player]"));
             }
             ConquestPlayer send = plugin.getPlayer(pl);
             Player target = Bukkit.getPlayer(args[1]);
             if (!send.getFriends().contains(target.getUniqueId())) {
-                pl.sendMessage(ChatColor.RED + "This person could not be found on your friends list!");
+                pl.sendMessage(ChatUtil.color("&cThis person could not be found on your friends list!"));
                 return true;
             }
             send.getFriends().remove(target.getUniqueId());
-            pl.sendMessage(ChatColor.AQUA + ChatColor.BOLD.toString() + "Friends >> " + ChatColor.GREEN + " removed " + ChatColor.GRAY + args[1] + ChatColor.GREEN + " from your friends list!");
+            pl.sendMessage(ChatUtil.color("&b&lFriends >> &1removed &7" + args[1] + " &1from your friends list!"));
         } else if (args[0].equalsIgnoreCase("list")) {
             ConquestPlayer player = plugin.getPlayer(pl);
             Inventory inv = Bukkit.createInventory(null, InventoryType.CHEST, "Your Friends");
@@ -81,7 +82,7 @@ public class FriendCommand implements CommandExecutor {
             pl.openInventory(inv);
         } else if (args[0].equalsIgnoreCase("decline")) {
             if (args.length != 2) {
-                pl.sendMessage(ChatColor.RED + "/f decline [from]");
+                pl.sendMessage(ChatUtil.color("&c/f decline [from]"));
                 return true;
             }
             String from = args[1];
@@ -92,7 +93,7 @@ public class FriendCommand implements CommandExecutor {
                 }
             }
             if (toDecline == null) {
-                pl.sendMessage(ChatColor.RED + "You do not have a friend request from " + from + "!");
+                pl.sendMessage(ChatUtil.color("&cYou do not have a friend request from " + from + "!"));
                 return true;
             }
 
@@ -101,7 +102,7 @@ public class FriendCommand implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("accept")) {
             System.out.println(args.toString());
             if (args.length != 2) {
-                pl.sendMessage(ChatColor.RED + "/f accept [from]");
+                pl.sendMessage(ChatUtil.color("&c/f accept [from]"));
                 return true;
             }
             String from = args[1];
@@ -112,7 +113,7 @@ public class FriendCommand implements CommandExecutor {
                 }
             }
             if (toAccept == null) {
-                pl.sendMessage(ChatColor.RED + "You do not have a friend request from " + from + "!");
+                pl.sendMessage(ChatUtil.color("&cYou do not have a friend request from " + from + "!"));
                 return true;
             }
 

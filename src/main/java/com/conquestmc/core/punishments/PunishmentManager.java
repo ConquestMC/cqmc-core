@@ -1,28 +1,20 @@
 package com.conquestmc.core.punishments;
 
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.util.ChatUtil;
 import com.google.common.collect.Lists;
-
-import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
-import com.mongodb.async.client.FindIterable;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 import org.apache.commons.lang.WordUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import javax.print.Doc;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public class PunishmentManager {
 
@@ -47,12 +39,12 @@ public class PunishmentManager {
         Player punish = Bukkit.getPlayer(uuid);
         if (type == PunishmentType.GAMEPLAY || type == PunishmentType.HACKING) {
             //BAN so kick them.
-            punish.kickPlayer(ChatColor.RED + "You have been banned for a " + WordUtils.capitalizeFully(type.name()) + " offence!");
+            punish.kickPlayer(ChatUtil.color("&cYou have been banned for a &4" + WordUtils.capitalizeFully(type.name()) + " &coffence!"));
         }
         this.punishmentCollection.insertOne(p.getDBObject(), new SingleResultCallback<Void>() {
             @Override
             public void onResult(Void aVoid, Throwable throwable) {
-                System.out.println("done");
+                System.out.println("done");//TODO remove debug message
             }
         });
     }
