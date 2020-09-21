@@ -4,6 +4,7 @@ import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.friends.FriendRequest;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -224,7 +225,7 @@ public class ConquestPlayer {
     }
 
     public void sendPointsAwardedMessage(int awarded) {
-        getBukkitPlayer().sendMessage(ChatUtil.color("&6&lYou've earned &c&l" + awarded + " &6&lConquest Points!"));
+        getBukkitPlayer().sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&6&lYou've earned &c&l" + awarded + " &6&lConquest Points!"));
     }
 
     public Statistic getStatistic(String name) {

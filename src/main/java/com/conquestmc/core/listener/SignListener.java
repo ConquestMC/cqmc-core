@@ -1,7 +1,6 @@
 package com.conquestmc.core.listener;
 
 import com.conquestmc.core.util.ChatUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;

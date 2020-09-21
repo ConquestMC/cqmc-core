@@ -2,6 +2,7 @@ package com.conquestmc.core.friends;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -70,7 +71,7 @@ public class FriendRequestListener extends JedisPubSub {
                         if (Bukkit.getPlayer(fromUUID).isOnline()) {
                             ConquestPlayer player = CorePlugin.getInstance().getPlayer(fromUUID);
                             player.getFriends().add(toUUID);
-                            Bukkit.getPlayer(fromUUID).sendMessage(ChatUtil.color("&a&lFriends >> &e" + to + " &ahas accepted your friend request!"));
+                            Bukkit.getPlayer(fromUUID).sendMessage(ServerManager.FRIENDS_PREFIX + ChatUtil.color("&e" + to + " &ahas accepted your friend request!"));
                             player.removeFriendRequest(to);
                         }
                     }
@@ -81,7 +82,7 @@ public class FriendRequestListener extends JedisPubSub {
                     if (Bukkit.getPlayer(fromUUID) != null && Bukkit.getPlayer(fromUUID).isOnline()) {
 
                         ConquestPlayer player = CorePlugin.getInstance().getPlayer(fromUUID);
-                        player.getBukkitPlayer().sendMessage(ChatUtil.color("&a&lFriends >> &e" + to + " &chas declined your friend request!"));
+                        player.getBukkitPlayer().sendMessage(ServerManager.FRIENDS_PREFIX + ChatUtil.color("&e" + to + " &chas declined your friend request!"));
                         player.removeFriendRequest(to);
                     }
                 }

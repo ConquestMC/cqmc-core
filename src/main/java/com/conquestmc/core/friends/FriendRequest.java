@@ -2,6 +2,7 @@ package com.conquestmc.core.friends;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.core.util.OldSounds;
 import com.google.gson.JsonObject;
@@ -44,7 +45,7 @@ public class FriendRequest {
 
     public void send() {
         if (!CorePlugin.getInstance().getOnlinePlayerNames().contains(to)) {
-            Bukkit.getPlayer(from).sendMessage(ChatUtil.color("&b&lFriends >> &c" + to + " &eis not online at this time!"));
+            Bukkit.getPlayer(from).sendMessage(ServerManager.FRIENDS_PREFIX + ChatUtil.color("&c" + to + " &eis not online at this time!"));
             return;
         }
 
@@ -54,7 +55,7 @@ public class FriendRequest {
 
             CorePlugin.getInstance().getPlayer(target).getFriendRequests().add(this);
 
-            String accept =  ChatUtil.color("&a&lACCEPT");
+            String accept = ChatUtil.color("&a&lACCEPT");
             String middle = ChatUtil.color(" &7or");
             String beggining = ChatUtil.color("&e" + from + " &7has requested to be friends! ");
             String decline = ChatUtil.color(" &c&lDECLINE");
@@ -74,8 +75,7 @@ public class FriendRequest {
             target.spigot().sendMessage(msg);
             target.playSound(target.getLocation(), OldSounds.LEVEL_UP.playSound(), 1, 1);
             this.setToUUID(target.getUniqueId());
-        }
-        else {
+        } else {
             try (Jedis j = CorePlugin.getInstance().getJedisPool().getResource()) {
                 JsonObject request = new JsonObject();
                 request.addProperty("from", from);
@@ -85,22 +85,22 @@ public class FriendRequest {
                 j.publish("friend.request", request.toString());
             }
         }
-        Bukkit.getPlayer(from).sendMessage(ChatUtil.color("&b&lFriends >> &aSent a friend request to &e"+ to));
+        Bukkit.getPlayer(from).sendMessage(ServerManager.FRIENDS_PREFIX + ChatUtil.color("&aSent a friend request to &e" + to));
     }
 
     public void changeStatus(String status) {
 
-        if (status.equalsIgnoreCase( "accepted") && Bukkit.getPlayer(this.getFromUUID()) != null && Bukkit.getPlayer(this.getFromUUID()).isOnline()) {
+        if (status.equalsIgnoreCase("accepted") && Bukkit.getPlayer(this.getFromUUID()) != null && Bukkit.getPlayer(this.getFromUUID()).isOnline()) {
             ConquestPlayer player = CorePlugin.getInstance().getPlayer(fromUUID);
             player.getFriends().add(toUUID);
-            Bukkit.getPlayer(fromUUID).sendMessage(ChatUtil.color("&b&lFriends >> &e" + to + " &ahas accepted your friend request!"));
+            Bukkit.getPlayer(fromUUID).sendMessage(ServerManager.FRIENDS_PREFIX + ChatUtil.color("&e" + to + " &ahas accepted your friend request!"));
             player.removeFriendRequest(to);
             return;
         }
 
-        if (status.equalsIgnoreCase( "declined") && Bukkit.getPlayer(this.getFromUUID()) != null && Bukkit.getPlayer(this.getFromUUID()).isOnline()) {
+        if (status.equalsIgnoreCase("declined") && Bukkit.getPlayer(this.getFromUUID()) != null && Bukkit.getPlayer(this.getFromUUID()).isOnline()) {
             ConquestPlayer player = CorePlugin.getInstance().getPlayer(fromUUID);
-            player.getBukkitPlayer().sendMessage(ChatUtil.color("&b&lFriends >> &e" +  to + " &chas declined your friend request!"));
+            player.getBukkitPlayer().sendMessage(ServerManager.FRIENDS_PREFIX + ChatUtil.color("&e" + to + " &chas declined your friend request!"));
             player.removeFriendRequest(to);
             return;
         }

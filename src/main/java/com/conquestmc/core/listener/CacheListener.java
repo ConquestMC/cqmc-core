@@ -2,6 +2,7 @@ package com.conquestmc.core.listener;
 
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.player.PlayerManager;
+import com.conquestmc.core.server.ServerManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,7 @@ public class CacheListener extends JedisPubSub {
 
     private final PlayerManager playerManager;
 
-    @Override
-    public void onMessage(String channel, String message) {
-        if (channel.equalsIgnoreCase("user.cache")) {
-
-
-
-        /*
+            /*
             Message:
             {
                 from: port,
@@ -32,8 +27,10 @@ public class CacheListener extends JedisPubSub {
             }
          */
 
+    @Override
+    public void onMessage(String channel, String message) {
+        if (channel.equalsIgnoreCase("user.cache")) {
             JsonObject object = new JsonParser().parse(message).getAsJsonObject();
-
             int port = object.get("port").getAsInt();
 
             if (Bukkit.getServer().getPort() != port) {
@@ -44,7 +41,7 @@ public class CacheListener extends JedisPubSub {
             Document doc = Document.parse(object.get("doc").getAsString());
 
             playerManager.getPlayers().put(uuid, new ConquestPlayer(uuid, doc));
-            System.out.println("Got cached player ");
+            ServerManager.log("&aRetrieved cached player"); //Remove if not needed
         } else if (channel.equalsIgnoreCase("player.disconnect")) {
             JsonObject object = new JsonParser().parse(message).getAsJsonObject();
 

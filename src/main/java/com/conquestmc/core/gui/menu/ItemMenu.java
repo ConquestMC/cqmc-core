@@ -10,7 +10,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ethan Borawski
@@ -42,7 +43,7 @@ public class ItemMenu implements Listener {
         this.size = size;
 
         this.items = new ArrayList<>();
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             items.add(null);
         }
     }

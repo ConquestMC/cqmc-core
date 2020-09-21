@@ -6,8 +6,8 @@ import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.player.DonationRank;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
-import com.conquestmc.core.util.OldSounds;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -55,7 +55,7 @@ public class PlayerListener implements Listener {
         }
 
         if (slept == 15) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatUtil.color("&cCould not load player data! Contact an administrator."));
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatUtil.color(ServerManager.SERVER_PREFIX + "&cCould not load player data! Contact an administrator."));
             return;
         }
 
@@ -87,15 +87,15 @@ public class PlayerListener implements Listener {
         username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
                 ChatUtil.color(
                         player.getNameColor() + name + "\n\n"
-                        + "&6&lRank " + prefix + "\n"
-                        + "&6&lServer " + "&fHub-1" //TODO---------------
-                        + "&6&lCurrency\n"
-                        + "  &6⇾ &eDrachma: &f" + player.getCoins() + "\n"
-                        + "  &6⇾ &eConquest Points: &f" + player.getPoints() + "\n"
-                        + "&6&lCompetitive Tier: &f" + player.getCompetitiveRankName() + "\n"
-                        + "&6&lFriends " + player.getFriends().size() + "\n\n"
-                        + "&2&l☛ &a&lClick to view profile &2&l☚" //TODO-----------
-        )).create()));
+                                + "&6&lRank " + prefix + "\n"
+                                + "&6&lServer " + "&fHub-1" //TODO---------------
+                                + "&6&lCurrency\n"
+                                + "  &6⇾ &eDrachma: &f" + player.getCoins() + "\n"
+                                + "  &6⇾ &eConquest Points: &f" + player.getPoints() + "\n"
+                                + "&6&lCompetitive Tier: &f" + player.getCompetitiveRankName() + "\n"
+                                + "&6&lFriends " + player.getFriends().size() + "\n\n"
+                                + "&2&l☛ &a&lClick to view profile &2&l☚" //TODO-----------
+                )).create()));
         split.setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
         return new TextComponent(prefix, username, split, msg);
     }
@@ -123,7 +123,7 @@ public class PlayerListener implements Listener {
             }
             Rank prefixed = newConquestPlayer.getPrefixedRank();
             String nameColor = newConquestPlayer.getNameColor();
-            p.setPlayerListName(ChatUtil.color( prefixed.getPrefix() + " " + nameColor + p.getName() + "   "));
+            p.setPlayerListName(ChatUtil.color(prefixed.getPrefix() + " " + nameColor + p.getName() + "   "));
 
             if (prefixed instanceof StaffRank) {
                 Bukkit.broadcastMessage(ChatUtil.color(joinMessages[0]

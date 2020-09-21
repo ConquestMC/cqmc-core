@@ -4,9 +4,11 @@ import org.bukkit.ChatColor;
 
 public class ChatUtil {
     private final static int CENTER_PX = 154;
+
     public static String color(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
+
     public static String getCenteredChatMessage(String message) {
         if (message == null || message.equals("")) ;
         message = ChatUtil.color(message);

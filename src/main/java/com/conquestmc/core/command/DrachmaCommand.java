@@ -2,6 +2,7 @@ package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -18,7 +19,7 @@ public class DrachmaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!commandSender.hasPermission("group.admin")) {
-            commandSender.sendMessage(ChatUtil.color("&cYou do not have permission to do this!"));
+            commandSender.sendMessage(ServerManager.PLAYER_NO_PERMISSION);
             return true;
         }
 
@@ -36,7 +37,7 @@ public class DrachmaCommand implements CommandExecutor {
             }
 
             if (Bukkit.getPlayer(userName) == null) {
-                commandSender.sendMessage(ChatUtil.color("&cPlayer is not on this server!")); //todo shouldn't be handled like this, should just update the value stored in db if not online
+                commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cPlayer is not on this server!")); //todo shouldn't be handled like this, should just update the value stored in db if not online
                 return true;
             }
 
@@ -52,9 +53,9 @@ public class DrachmaCommand implements CommandExecutor {
             } else {
                 return true;
             }
-            commandSender.sendMessage(ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + cp.getCoins()));
+            commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + cp.getCoins()));
         } else {
-            commandSender.sendMessage(ChatUtil.color("&c/drachma set|give|take user amount"));
+            commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&c/drachma set|give|take user amount"));
             return true;
         }
 

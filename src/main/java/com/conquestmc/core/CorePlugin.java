@@ -15,7 +15,7 @@ import com.conquestmc.core.punishments.PunishmentCommand;
 import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
 import com.conquestmc.core.punishments.PunishmentManager;
-import com.conquestmc.core.rest.PlayerRestfulService;
+import com.conquestmc.core.server.ServerManager;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mongodb.async.client.MongoClient;
@@ -72,15 +72,19 @@ public class CorePlugin extends JavaPlugin {
     List<String> onlinePlayers = Lists.newArrayList();
 
     /*
-    Changelist:
+            <aesthetic-update changelist> <2020/09/21>
+
     - Created registerCommands() method in CorePlugin.java to clean up onEnable()
     - Created ChatUtil which should now always be used to convert color codes
     - Deleted ServerManager.java as it is empty and unused
     - Deleted TrophyListener.java as it is empty and unused
     - Deleted PardonCommand.java as it is empty and unused
+    - Created ServerManager.java again to store prefix's & logging method
     - Updated and replaced all uses of ChatColor.translateAlternativeColorCodes() to ChatUtil.color for easier readability
     - Marked all issues I saw that were not mentioned on this list as TODO and you should be able to find and fix easily.
     - Fixed any server message's color code typos
+    - Changed any "System.out.println()" to either have a //todo next to it or to the new logging system defined in ServerManager.java
+    - Replaced all server prefix's in ServerManager.java, use these whenever you need to use a prefix.
      */
 
     @Override
@@ -111,7 +115,7 @@ public class CorePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        ServerManager.log("&cShutting down...");
     }
 
     private void registerListeners() {
@@ -119,6 +123,7 @@ public class CorePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FriendListener(), this);
         getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
         getServer().getPluginManager().registerEvents(new SignListener(), this);
+        ServerManager.log("&aSuccessfully registered listeners");
     }
 
     private void registerCommands() {
@@ -132,6 +137,7 @@ public class CorePlugin extends JavaPlugin {
         getCommand("givecosmetic").setExecutor(new CosmeticCommand(this));
         getCommand("drachma").setExecutor(new DrachmaCommand(this));
         getCommand("speed").setExecutor(new SpeedCommand());
+        ServerManager.log("&aSuccessfully registered commands");
     }
 
     public ConquestPlayer getPlayer(Player player) {
@@ -181,8 +187,7 @@ public class CorePlugin extends JavaPlugin {
         getPlayerCollection().find(eq("uuid", uuid.toString())).first((d, throwable) -> {
             if (throwable != null) {
                 System.err.println(throwable.toString());
-            }
-            else {
+            } else {
                 promise.complete(d);
             }
         });

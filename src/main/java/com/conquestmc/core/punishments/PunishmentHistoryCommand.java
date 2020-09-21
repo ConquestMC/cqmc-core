@@ -1,5 +1,6 @@
 package com.conquestmc.core.punishments;
 
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.core.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,25 +37,22 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                 Player player = Bukkit.getPlayer(playerName);
 
                 if (player == null) {
-                    sender.sendMessage(ChatUtil.color("&cThat player is not online at this time!"));
+                    sender.sendMessage(ServerManager.PUNISH_PREFIX + ChatUtil.color("&cThat player is not online at this time!"));
                     return true;
                 }
 
                 List<Punishment> history = punishmentManager.getPunishmentHistory(player.getUniqueId());
-                Inventory inv = Bukkit.createInventory(null, 9*6, "Punish History: " + playerName);
+                Inventory inv = Bukkit.createInventory(null, 9 * 6, "Punish History: " + playerName);
 
                 for (Punishment p : history) {
                     Material mat = null;
                     if (p.getType() == PunishmentType.GAMEPLAY) {
                         mat = Material.ANVIL;
-                    }
-                    else if (p.getType() == PunishmentType.HACKING) {
+                    } else if (p.getType() == PunishmentType.HACKING) {
                         mat = Material.GOLD_SWORD;
-                    }
-                    else if (p.getType() == PunishmentType.CHAT) {
+                    } else if (p.getType() == PunishmentType.CHAT) {
                         mat = Material.BOOK_AND_QUILL;
-                    }
-                    else {
+                    } else {
                         mat = Material.PAPER;
                     }
 

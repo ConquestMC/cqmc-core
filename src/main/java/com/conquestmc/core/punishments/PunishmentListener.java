@@ -1,5 +1,6 @@
 package com.conquestmc.core.punishments;
 
+import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.util.ChatUtil;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,7 @@ public class PunishmentListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         if (punishmentManager.isMuted(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(ChatUtil.color("&cYou are currently muted! You may not speak at this time."));
+            event.getPlayer().sendMessage(ServerManager.PUNISH_PREFIX + ChatUtil.color("&cYou are currently muted! You may not speak at this time."));
         }
     }
 
@@ -27,7 +28,7 @@ public class PunishmentListener implements Listener {
         UUID uuid = event.getUniqueId();
         if (punishmentManager.isGameBanned(uuid)) {
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(ChatUtil.color("You have been banned from ConquestMC for: <reason>")); //TODO switch to format specified in Server Planning (Ask kyle if trouble finding)
+            event.setKickMessage(ServerManager.PUNISH_PREFIX + ChatUtil.color("You have been banned from ConquestMC for: <reason>")); //TODO switch to format specified in Server Planning (Ask kyle if trouble finding)
         }
     }
 }
