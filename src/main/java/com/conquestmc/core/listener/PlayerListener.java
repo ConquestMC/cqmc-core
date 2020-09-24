@@ -84,18 +84,20 @@ public class PlayerListener implements Listener {
         TextComponent msg = new TextComponent(ChatUtil.color(player.getPrefixedRank().getName().equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
 
         prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(player.getPrefixedRank().getPrefix() + "\n" + getStaffOnHover(player)).create()));
-        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
-                ChatUtil.color(
-                        player.getNameColor() + name + "\n\n"
-                                + "&6&lRank " + prefix + "\n"
-                                + "&6&lServer " + "&fHub-1" //TODO---------------
-                                + "&6&lCurrency\n"
-                                + "  &6⇾ &eDrachma: &f" + player.getCoins() + "\n"
-                                + "  &6⇾ &eConquest Points: &f" + player.getPoints() + "\n"
-                                + "&6&lCompetitive Tier: &f" + player.getCompetitiveRankName() + "\n"
-                                + "&6&lFriends " + player.getFriends().size() + "\n\n"
-                                + "&2&l☛ &a&lClick to view profile &2&l☚" //TODO-----------
-                )).create()));
+        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', player.getNameColor() + name))
+                .append("\n")
+                .append("\n")
+                .append(ChatUtil.color("&6&lRank " + player.getPrefixedRank().getPrefix()))
+                .append("\n")
+                .append(ChatUtil.color("&6&lCurrency"))
+                .append("\n")
+                .append(ChatUtil.color("  &6⇾ &eDrachma: &f" + player.getCoins()))
+                .append("\n")
+                .append(ChatUtil.color("  &6⇾ &eConquest Points: &f" + player.getPoints()))
+                .append("\n")
+                .append(ChatUtil.color("&6&lFriends " + player.getFriends().size()))
+                .append("\n")
+                .append((ChatUtil.color("&2&l☛ &a&lClick to view profile &2&l☚"))).create()));
         split.setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
         return new TextComponent(prefix, username, split, msg);
     }

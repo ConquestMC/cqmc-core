@@ -94,6 +94,11 @@ public class ConquestPlayer {
 
         this.knownName = (String) object.get("knownName");
         this.nameColor = (String) object.get("nameColor");
+        if (object.get("nameColor") == null) {
+            this.nameColor = "&7";
+        } else {
+            this.nameColor = (String) object.get("nameColor");
+        }
         this.coins = (int) object.get("coins");
         this.points = (long) object.get("points");
 
