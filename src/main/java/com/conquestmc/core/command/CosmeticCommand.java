@@ -3,6 +3,7 @@ package com.conquestmc.core.command;
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -34,13 +35,13 @@ public class CosmeticCommand implements CommandExecutor {
 
         ConquestPlayer targetPlayer = plugin.getPlayer(target.getUniqueId());
         if (targetPlayer.getCosmetics().contains(cosmeticName)) {
-            sender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cThe player already has this cosmetic!"));
+            sender.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&cThe player already has this cosmetic!"));
             return true;
         }
 
         targetPlayer.unlockCosmetic(cosmeticName);
-        target.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&7You now have &d" + cosmeticName));
-        sender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&7Awarded &d" + cosmeticName + " &7to &d" + targetName + ""));
+        target.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&7You now have &d" + cosmeticName));
+        sender.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&7Awarded &d" + cosmeticName + " &7to &d" + targetName + ""));
 
         return false;
     }

@@ -7,6 +7,7 @@ import com.conquestmc.core.player.DonationRank;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -55,7 +56,7 @@ public class PlayerListener implements Listener {
         }
 
         if (slept == 15) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatUtil.color(ServerManager.SERVER_PREFIX + "&cCould not load player data! Contact an administrator."));
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatUtil.color(ServerMessages.SERVER_PREFIX.getPrefix() + "&cCould not load player data! Contact an administrator."));
             return;
         }
 
@@ -79,12 +80,12 @@ public class PlayerListener implements Listener {
 
     public TextComponent getChatFormat(ConquestPlayer player, String name, String message) {
         TextComponent prefix = new TextComponent(player.getPrefixedRank().getName().equalsIgnoreCase("none") ? "" : player.getPrefixedRank().getPrefix());
-        TextComponent username = new TextComponent(ChatUtil.color(player.getNameColor() + name));
+        TextComponent username = new TextComponent(ChatUtil.color(" " + player.getNameColor() + name));
         TextComponent split = new TextComponent(" | ");
         TextComponent msg = new TextComponent(ChatUtil.color(player.getPrefixedRank().getName().equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
 
         prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(player.getPrefixedRank().getPrefix() + "\n" + getStaffOnHover(player)).create()));
-        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', player.getNameColor() + name))
+        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color( player.getNameColor() + name))
                 .append("\n")
                 .append("\n")
                 .append(ChatUtil.color("&6&lRank " + player.getPrefixedRank().getPrefix()))

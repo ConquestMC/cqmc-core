@@ -1,6 +1,7 @@
 package com.conquestmc.core.command;
 
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
@@ -15,7 +16,7 @@ public class GameModeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender.hasPermission("core.gamemode"))) {
-            sender.sendMessage(ServerManager.PLAYER_NO_PERMISSION);
+            sender.sendMessage(ServerMessages.PLAYER_NO_PERMISSION.getPrefix());
             return false;
         }
 
@@ -23,7 +24,7 @@ public class GameModeCommand implements CommandExecutor {
             String gameMode = args[0];
 
             if (!(sender instanceof Player)) {
-                sender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cPlease provide a target!"));
+                sender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&cPlease provide a target!"));
                 return true;
             }
 
@@ -32,15 +33,15 @@ public class GameModeCommand implements CommandExecutor {
             GameMode mode = getMode(gameMode);
 
             if (mode == null) {
-                player.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cNot a valid gamemode!"));
+                player.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&cNot a valid gamemode!"));
                 return true;
             }
 
             player.setGameMode(mode);
-            player.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&aYour game mode has been updated to: &6" + WordUtils.capitalizeFully(mode.name())));
+            player.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aYour game mode has been updated to: &6" + WordUtils.capitalizeFully(mode.name())));
         } else if (args.length == 2) {
             if (!(sender.hasPermission("core.gamemode.others"))) {
-                sender.sendMessage(ServerManager.PLAYER_NO_PERMISSION);
+                sender.sendMessage(ServerMessages.PLAYER_NO_PERMISSION.getPrefix());
                 return true;
             }
 
@@ -48,19 +49,19 @@ public class GameModeCommand implements CommandExecutor {
             Player target = Bukkit.getPlayer(targetName);
 
             if (target == null || !target.isOnline()) {
-                sender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cCannot find the specified player!"));
+                sender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&cCannot find the specified player!"));
                 return true;
             }
 
             GameMode mode = getMode(args[0]);
 
             if (mode == null) {
-                sender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cNot a valid gamemode!"));
+                sender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&cNot a valid gamemode!"));
                 return true;
             }
 
             target.setGameMode(mode);
-            target.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&aYour game mode has been updated to: &6" + WordUtils.capitalizeFully(mode.name())));
+            target.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aYour game mode has been updated to: &6" + WordUtils.capitalizeFully(mode.name())));
         }
         return true;
     }

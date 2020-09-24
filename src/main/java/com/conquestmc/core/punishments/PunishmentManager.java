@@ -2,6 +2,7 @@ package com.conquestmc.core.punishments;
 
 import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import com.google.common.collect.Lists;
 import com.mongodb.async.SingleResultCallback;
@@ -40,7 +41,7 @@ public class PunishmentManager {
         Player punish = Bukkit.getPlayer(uuid);
         if (type == PunishmentType.GAMEPLAY || type == PunishmentType.HACKING) {
             //BAN so kick them.
-            punish.kickPlayer(ServerManager.PUNISH_PREFIX + ChatUtil.color("&cYou have been banned for a &4" + WordUtils.capitalizeFully(type.name()) + " &coffence!"));
+            punish.kickPlayer(ServerMessages.PUNISH_PREFIX.getPrefix() + ChatUtil.color("&cYou have been banned for a &4" + WordUtils.capitalizeFully(type.name()) + " &coffence!"));
         }
         this.punishmentCollection.insertOne(p.getDBObject(), new SingleResultCallback<Void>() {
             @Override

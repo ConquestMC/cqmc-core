@@ -4,6 +4,7 @@ import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.player.Rank;
 import com.conquestmc.core.player.StaffRank;
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -17,19 +18,19 @@ public class DemoteCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (!commandSender.hasPermission("core.demote")) {
-            commandSender.sendMessage(ServerManager.PLAYER_NO_PERMISSION);
+            commandSender.sendMessage(ServerMessages.PLAYER_NO_PERMISSION.getPrefix());
             return true;
         }
 
         if (args.length != 1) {
-            commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&c/demote <user>"));
+            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&c/demote <user>"));
             return true;
         }
         String userName = args[0];
         Player target = Bukkit.getPlayer(userName);
 
         if (target == null) {
-            commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cCannot find the player specified!"));
+            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&cCannot find the player specified!"));
             return true;
         }
 
@@ -41,13 +42,13 @@ public class DemoteCommand implements CommandExecutor {
             }
         }
         if (staffRank == null) {
-            commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&cCannot demote this user as they have no staff rank!"));
+            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&cCannot demote this user as they have no staff rank!"));
             return true;
         }
 
         ranks.remove(staffRank);
         CorePlugin.getInstance().getPlayer(target).updatePrefixedRank();
-        commandSender.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&aYou have demoted &e" + target.getName()));
+        commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aYou have demoted &e" + target.getName()));
         return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.conquestmc.core.punishments;
 
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.core.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                 Player player = Bukkit.getPlayer(playerName);
 
                 if (player == null) {
-                    sender.sendMessage(ServerManager.PUNISH_PREFIX + ChatUtil.color("&cThat player is not online at this time!"));
+                    sender.sendMessage(ServerMessages.PUNISH_PREFIX.getPrefix() + ChatUtil.color("&cThat player is not online at this time!"));
                     return true;
                 }
 

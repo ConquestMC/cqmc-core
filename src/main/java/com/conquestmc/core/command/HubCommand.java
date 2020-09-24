@@ -2,6 +2,7 @@ package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -20,12 +21,12 @@ public class HubCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(ServerManager.SENDER_INVALID);
+            commandSender.sendMessage(ServerMessages.SENDER_INVALID.getPrefix());
             return true;
         }
 
         Player player = (Player) commandSender;
-        player.sendMessage(ServerManager.SERVER_PREFIX + ChatUtil.color("&eA trusty steed will escort you to hub..."));
+        player.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&eA trusty steed will escort you to hub..."));
         sendPlayerToLobby(player);
         return true;
     }
