@@ -38,7 +38,7 @@ public class ConfigManager<T> {
         if (!file.exists()) {
             URL url = plugin.getClass().getResource("/" + fileName);
             try {
-                System.out.println("[CQMC-CORE] COPYING DEFAULT CONFIG: " + fileName);
+                System.out.println("[CQMC-CORE] COPYING DEFAULT CONFIG: " + fileName); //todo remove statement if not needed, document code instead
                 FileUtils.copyURLToFile(url, file);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -62,7 +62,7 @@ public class ConfigManager<T> {
     public void saveConfig() {
         FileWriter fw = null;
         try {
-            fw = new FileWriter("plugins/" + directory +"/" + fileName);
+            fw = new FileWriter("plugins/" + directory + "/" + fileName);
             gson.toJson(config, fw);
             fw.close();
         } catch (IOException e) {

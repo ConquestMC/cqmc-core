@@ -1,7 +1,9 @@
 package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
-import org.bukkit.ChatColor;
+import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
+import com.conquestmc.core.util.ChatUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,12 +20,14 @@ public class VanishCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(ServerMessages.SENDER_INVALID.getPrefix());
             return true;
         }
 
         Player sender = (Player) commandSender;
 
         if (!sender.hasPermission("group.admin")) {
+            sender.sendMessage(ServerMessages.PLAYER_NO_PERMISSION.getPrefix());
             return true;
         }
 
@@ -31,8 +35,7 @@ public class VanishCommand implements CommandExecutor {
             conquestPlayer.getPlayerSettings().put("vanished", true);
         }));
 
-        sender.sendMessage(ChatColor.GREEN + "you have been vanished!");
-
+        sender.sendMessage(ServerMessages.VANISH_PREFIX.getPrefix() + ChatUtil.color("&f&l*POOF* &ayou have been vanished!"));
         return false;
     }
 }

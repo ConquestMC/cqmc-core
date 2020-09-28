@@ -2,7 +2,6 @@ package com.conquestmc.core.punishments;
 
 import com.conquestmc.core.util.TimeUtil;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bson.Document;
 

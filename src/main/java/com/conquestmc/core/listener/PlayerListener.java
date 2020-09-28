@@ -3,12 +3,15 @@ package com.conquestmc.core.listener;
 import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.event.PlayerLoadedEvent;
 import com.conquestmc.core.model.ConquestPlayer;
-
-import com.conquestmc.core.model.SimpleScoreboard;
+import com.conquestmc.core.player.DonationRank;
 import com.conquestmc.core.player.Rank;
-
 import com.conquestmc.core.player.StaffRank;
-import org.apache.commons.lang.WordUtils;
+import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
+import com.conquestmc.core.util.ChatUtil;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -28,10 +31,10 @@ public class PlayerListener implements Listener {
     private CorePlugin plugin;
 
     private String[] joinMessages = new String[]{
-            "  &8&l[&2&l+&8&l] &c{rank} {name} has joined the game",
-            "  &8&l[&2&l+&8&l] &5{rank} {name} has joined the game",
-            "  &8&l[&2&l+&8&l] &6{rank} {name} has joined the game",
-            "  &8&l[&2&l+&8&l] &6&l{rank} {name} has joined the game"
+            "&8&l[&a&l+&8&l] {rank} {nameColor}{name} &chas joined the game",
+            "&8&l[&a&l+&8&l] {rank} {nameColor}{name} &dhas joined the game",
+            "&8&l[&a&l+&8&l] {rank} {nameColor}{name} &6has joined the game",
+            "&8&l[&a&l+&8&l] {rank} {nameColor}{name} &6&lhas joined the game"
     };
 
     public PlayerListener(CorePlugin plugin) {
@@ -53,7 +56,7 @@ public class PlayerListener implements Listener {
         }
 
         if (slept == 15) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Could not load player data! Contact an administrator.");
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatUtil.color(ServerMessages.SERVER_PREFIX.getPrefix() + "&cCould not load player data! Contact an administrator."));
             return;
         }
 
@@ -70,9 +73,44 @@ public class PlayerListener implements Listener {
                 System.err.println(throwable);
                 return;
             }
-            System.out.println(conquestPlayer.getBukkitPlayer().getName() + " Joined with rank: " + conquestPlayer.getPrefixedRank().getPrefix());
+            System.out.println(conquestPlayer.getBukkitPlayer().getName() + " Joined with rank: " + conquestPlayer.getPrefixedRank().getPrefix()); //todo proper logging system
         }));
         Bukkit.getPluginManager().callEvent(new PlayerLoadedEvent(plugin.getPlayer(uuid)));
+    }
+
+    public TextComponent getChatFormat(ConquestPlayer player, String name, String message) {
+        TextComponent prefix = new TextComponent(player.getPrefixedRank().getName().equalsIgnoreCase("none") ? "" : player.getPrefixedRank().getPrefix());
+        TextComponent username = new TextComponent(ChatUtil.color(" " + player.getNameColor() + name));
+        TextComponent split = new TextComponent(" | ");
+        TextComponent msg = new TextComponent(ChatUtil.color(player.getPrefixedRank().getName().equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
+
+        prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(player.getPrefixedRank().getPrefix() + "\n" + getStaffOnHover(player)).create()));
+        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color( player.getNameColor() + name))
+                .append("\n")
+                .append("\n")
+                .append(ChatUtil.color("&6&lRank " + player.getPrefixedRank().getPrefix()))
+                .append("\n")
+                .append(ChatUtil.color("&6&lCurrency"))
+                .append("\n")
+                .append(ChatUtil.color("  &6⇾ &eDrachma: &f" + player.getCoins()))
+                .append("\n")
+                .append(ChatUtil.color("  &6⇾ &eConquest Points: &f" + player.getPoints()))
+                .append("\n")
+                .append(ChatUtil.color("&6&lFriends " + player.getFriends().size()))
+                .append("\n")
+                .append((ChatUtil.color("&2&l☛ &a&lClick to view profile &2&l☚"))).create()));
+        split.setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
+        return new TextComponent(prefix, username, split, msg);
+    }
+
+    private String getStaffOnHover(ConquestPlayer player) {
+        if (player.getPrefixedRank() instanceof StaffRank) {
+            return ChatUtil.color("&6Staff");
+        } else if (player.getPrefixedRank() instanceof DonationRank) {
+            return ChatUtil.color("&5Donor");
+        } else {
+            return ChatUtil.color("&7Default");
+        }
     }
 
     @EventHandler
@@ -86,26 +124,32 @@ public class PlayerListener implements Listener {
                 String[] arr = new String[rank.getPermissions().size()];
                 plugin.getPlayerManager().givePermissions(p, rank.getPermissions().toArray(arr));
             }
-
             Rank prefixed = newConquestPlayer.getPrefixedRank();
+            String nameColor = newConquestPlayer.getNameColor();
+            p.setPlayerListName(ChatUtil.color(prefixed.getPrefix() + " " + nameColor + p.getName() + "   "));
+
             if (prefixed instanceof StaffRank) {
-                Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[0]
-                        .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
+                Bukkit.broadcastMessage(ChatUtil.color(joinMessages[0]
+                        .replace("{rank}", prefixed.getPrefix())
+                        .replace("{nameColor}", nameColor)
                         .replace("{name}", p.getName())));
             } else {
                 if (prefixed.getName().equalsIgnoreCase("content")) {
-                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[1]
+                    Bukkit.broadcastMessage(ChatUtil.color(joinMessages[1]
                             .replace("{rank}", "Content Creator")
+                            .replace("{nameColor}", nameColor)
                             .replace("{name}", p.getName())));
                 }
                 if (prefixed.getName().equalsIgnoreCase("king")) {
-                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[2]
-                            .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
+                    Bukkit.broadcastMessage(ChatUtil.color(joinMessages[2]
+                            .replace("{rank}", prefixed.getPrefix())
+                            .replace("{nameColor}", nameColor)
                             .replace("{name}", p.getName())));
                 }
                 if (prefixed.getName().equalsIgnoreCase("emperor")) {
-                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', joinMessages[3]
-                            .replace("{rank}", WordUtils.capitalizeFully(prefixed.getName()))
+                    Bukkit.broadcastMessage(ChatUtil.color(joinMessages[3]
+                            .replace("{rank}", prefixed.getPrefix())
+                            .replace("{nameColor}", nameColor)
                             .replace("{name}", p.getName())));
                 }
             }
@@ -141,12 +185,11 @@ public class PlayerListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         ConquestPlayer conquestPlayer = plugin.getPlayer(player);
-        Rank prefixedRank = conquestPlayer.getPrefixedRank();
 
-        String chat = prefixedRank.getName().equalsIgnoreCase("none") ? ChatColor.GRAY + event.getMessage() : ChatColor.WHITE + event.getMessage();
-        String prefix = prefixedRank.getName().equalsIgnoreCase("none") ? "" : prefixedRank.getPrefix() + ChatColor.GRAY + " ⎥ ";
-        String format = prefix + ChatColor.YELLOW + player.getName() + " " + chat;
-        event.setFormat(format);
+        event.setCancelled(true); //TODO ADD CHECK TO MAKE SURE PLAYER IS NOT MUTED ---------------
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            online.spigot().sendMessage(getChatFormat(conquestPlayer, player.getName(), event.getMessage()));
+        }
     }
 
     @EventHandler

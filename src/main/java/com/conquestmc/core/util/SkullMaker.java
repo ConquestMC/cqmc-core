@@ -150,7 +150,8 @@ public class SkullMaker {
             field.setAccessible(true);
             try {
                 field.set(instance, value);
-            } catch (IllegalAccessException ignored) {}
+            } catch (IllegalAccessException ignored) {
+            }
         }
 
         private static Field getDeclaredField(Class<?> clazz, String name) {
