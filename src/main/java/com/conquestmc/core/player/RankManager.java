@@ -1,5 +1,6 @@
 package com.conquestmc.core.player;
 
+import com.conquestmc.core.server.ServerManager;
 import com.google.common.collect.Maps;
 
 import java.util.Arrays;
@@ -61,6 +62,7 @@ public class RankManager {
         ranks.put("manager", manager);
         ranks.put("dev", dev);
         ranks.put("owner", owner);
+        ServerManager.log("&eRegistered &c" + ranks.size() + " &eranks");
     }
 
     public Rank getRank(String name) {

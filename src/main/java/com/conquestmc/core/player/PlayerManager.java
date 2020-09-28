@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.in;
 
 public class PlayerManager {
 
@@ -46,8 +45,7 @@ public class PlayerManager {
                 players.put(uuid, temp);
                 promise.complete(temp);
                 insertPlayer(uuid);
-            }
-            else {
+            } else {
                 ConquestPlayer pl = new ConquestPlayer(uuid, document);
                 this.players.put(uuid, pl);
                 promise.complete(pl);
@@ -55,6 +53,7 @@ public class PlayerManager {
         });
         return promise;
     }
+
     public void removePlayer(UUID uuid) {
         this.players.remove(uuid);
     }
@@ -66,8 +65,7 @@ public class PlayerManager {
             if (throwable != null) {
                 System.err.println(throwable);
                 promise.complete(false);
-            }
-            else {
+            } else {
                 promise.complete(true);
             }
         }));

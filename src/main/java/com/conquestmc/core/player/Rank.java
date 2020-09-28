@@ -1,7 +1,7 @@
 package com.conquestmc.core.player;
 
+import com.conquestmc.core.util.ChatUtil;
 import com.google.common.collect.Lists;
-import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +33,7 @@ public class Rank {
     public void addPermission(String perm) {
         this.permissions.add(perm);
     }
+
     public void addPermissions(String... permissions) {
         this.permissions.addAll(Arrays.asList(permissions));
     }
@@ -46,7 +47,7 @@ public class Rank {
     }
 
     public String getPrefix() {
-        return ChatColor.translateAlternateColorCodes('&', prefix);
+        return ChatUtil.color(prefix);
     }
 
     public List<Rank> getInherits() {

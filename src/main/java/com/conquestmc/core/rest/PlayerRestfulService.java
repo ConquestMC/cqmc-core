@@ -67,7 +67,7 @@ public class PlayerRestfulService {
         try {
             int statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: " + method.getStatusLine());
+                System.err.println("Method failed: " + method.getStatusLine()); //todo switch to logging method / remove if not needed
             }
 
             byte[] responseBody = method.getResponseBody();

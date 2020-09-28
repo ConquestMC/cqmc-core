@@ -1,5 +1,8 @@
 package com.conquestmc.core.punishments;
 
+import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.core.server.ServerMessages;
+import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.core.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.WordUtils;
@@ -35,25 +38,22 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                 Player player = Bukkit.getPlayer(playerName);
 
                 if (player == null) {
-                    sender.sendMessage(ChatColor.RED + "That player is not online at this time!");
+                    sender.sendMessage(ServerMessages.PUNISH_PREFIX.getPrefix() + ChatUtil.color("&cThat player is not online at this time!"));
                     return true;
                 }
 
                 List<Punishment> history = punishmentManager.getPunishmentHistory(player.getUniqueId());
-                Inventory inv = Bukkit.createInventory(null, 9*6, "Punish History: " + playerName);
+                Inventory inv = Bukkit.createInventory(null, 9 * 6, "Punish History: " + playerName);
 
                 for (Punishment p : history) {
                     Material mat = null;
                     if (p.getType() == PunishmentType.GAMEPLAY) {
                         mat = Material.ANVIL;
-                    }
-                    else if (p.getType() == PunishmentType.HACKING) {
+                    } else if (p.getType() == PunishmentType.HACKING) {
                         mat = Material.GOLD_SWORD;
-                    }
-                    else if (p.getType() == PunishmentType.CHAT) {
+                    } else if (p.getType() == PunishmentType.CHAT) {
                         mat = Material.BOOK_AND_QUILL;
-                    }
-                    else {
+                    } else {
                         mat = Material.PAPER;
                     }
 
@@ -61,11 +61,11 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                     ItemMeta meta = punishItem.getItemMeta();
                     meta.setDisplayName(ChatColor.AQUA + WordUtils.capitalizeFully(p.getType().name()));
                     meta.setLore(Arrays.asList(
-                            ChatColor.GOLD + "Date Issued: " + ChatColor.YELLOW + p.getIssued(),
-                            ChatColor.GOLD + "Severity: " + ChatColor.YELLOW + p.getSeverity(),
-                            ChatColor.GOLD + "Reason: " + ChatColor.YELLOW + "Coming soon.",
-                            ChatColor.GOLD + "Duration: " + ChatColor.YELLOW + TimeUtil.formatTimeToFormalDate(p.getActiveUntil()),
-                            ChatColor.GOLD + "Time Left: " + ChatColor.YELLOW + p.getTimeLeftVisual()
+                            ChatUtil.color("&6Date Issued: &e" + p.getIssued()),
+                            ChatUtil.color("&6Severity: &e" + p.getSeverity()),
+                            ChatUtil.color("&6Reason: &e" + "Coming soon."), //TODO replace placeholder
+                            ChatUtil.color("&6Duration: &e" + TimeUtil.formatTimeToFormalDate(p.getActiveUntil())),
+                            ChatUtil.color("&6Time Left: &e" + p.getTimeLeftVisual())
                     ));
                     punishItem.setItemMeta(meta);
                     inv.addItem(punishItem);
