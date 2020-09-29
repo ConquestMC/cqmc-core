@@ -3,25 +3,20 @@ package com.conquestmc.core;
 import com.conquestmc.core.command.*;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
-import com.conquestmc.core.friends.FriendListener;
-import com.conquestmc.core.friends.FriendRequestListener;
 import com.conquestmc.core.listener.PlayerListener;
-import com.conquestmc.core.listener.RedisLockListener;
+import com.conquestmc.core.listener.ProfileDefaultListener;
 import com.conquestmc.core.listener.SignListener;
-import com.conquestmc.core.model.ConquestPlayer;
-import com.conquestmc.core.player.PlayerManager;
-import com.conquestmc.core.player.RankManager;
+import com.conquestmc.core.model.Rank;
 import com.conquestmc.core.punishments.PunishmentCommand;
 import com.conquestmc.core.punishments.PunishmentHistoryCommand;
 import com.conquestmc.core.punishments.PunishmentListener;
 import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.server.ServerManager;
+import com.conquestmc.foundation.API;
+import com.conquestmc.foundation.CorePlayer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mongodb.async.client.MongoClient;
-import com.mongodb.async.client.MongoClients;
-import com.mongodb.async.client.MongoCollection;
-import com.mongodb.async.client.MongoDatabase;
+import com.mongodb.client.MongoClients;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.entity.Player;
@@ -42,7 +37,6 @@ public class CorePlugin extends JavaPlugin {
 
     @Getter
     private ConfigManager<MainConfig> serverConfigManager = new ConfigManager<>(this, "config.json", MainConfig.class);
-
     @Getter
     private MainConfig serverConfig;
 
@@ -52,24 +46,10 @@ public class CorePlugin extends JavaPlugin {
     @Getter
     private JedisPool jedisPool;
 
-    private MongoClient mongoClient;
-    private MongoDatabase playerDatabase;
-
-    @Getter
-    private MongoCollection<Document> playerCollection;
-
     @Getter
     private Map<UUID, PermissionAttachment> perms = Maps.newHashMap();
 
     private PunishmentManager punishmentManager;
-
-    @Getter
-    private PlayerManager playerManager;
-
-    @Getter
-    private RankManager rankManager;
-
-    List<String> onlinePlayers = Lists.newArrayList();
 
     /*
             <aesthetic-update changelist> <2020/09/21>
@@ -97,20 +77,11 @@ public class CorePlugin extends JavaPlugin {
         config.setMaxTotal(128);
         this.jedisPool = new JedisPool(config);
 
-        this.mongoClient = MongoClients.create();
-        this.playerDatabase = mongoClient.getDatabase("conquest");
-        this.playerCollection = playerDatabase.getCollection("players");
-        this.punishmentManager = new PunishmentManager(playerDatabase);
-
-        this.rankManager = new RankManager();
-        this.playerManager = new PlayerManager(playerCollection);
-
         registerCommands();
 
-        new Thread(() -> jedisPool.getResource().subscribe(new RedisLockListener(this), "redis.lock"), "redis").start();
+        //this.punishmentManager = new PunishmentManager(MongoClients.create().getDatabase("conquest"));
 
         registerListeners();
-        registerChannelListeners();
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
@@ -120,50 +91,23 @@ public class CorePlugin extends JavaPlugin {
     }
 
     private void registerListeners() {
+        getServer().getPluginManager().registerEvents(new ProfileDefaultListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getServer().getPluginManager().registerEvents(new FriendListener(), this);
-        getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
+        //getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
         getServer().getPluginManager().registerEvents(new SignListener(), this);
         ServerManager.log("&aSuccessfully registered listeners");
     }
 
     private void registerCommands() {
         getCommand("gamemode").setExecutor(new GameModeCommand());
-        getCommand("giverank").setExecutor(new RankCommand(this));
-        getCommand("friend").setExecutor(new FriendCommand(this));
         getCommand("punish").setExecutor(new PunishmentCommand(punishmentManager));
         getCommand("ph").setExecutor(new PunishmentHistoryCommand(punishmentManager));
         getCommand("hub").setExecutor(new HubCommand(this));
-        getCommand("demote").setExecutor(new DemoteCommand());
         getCommand("givecosmetic").setExecutor(new CosmeticCommand(this));
         getCommand("drachma").setExecutor(new DrachmaCommand(this));
         getCommand("speed").setExecutor(new SpeedCommand());
+        getCommand("setrank").setExecutor(new RankCommand(this));
         ServerManager.log("&aSuccessfully registered commands");
-    }
-
-    public ConquestPlayer getPlayer(Player player) {
-        return getPlayer(player.getUniqueId());
-    }
-
-    public ConquestPlayer getPlayer(UUID uuid) {
-        return playerManager.getPlayers().get(uuid);
-    }
-
-    public List<String> getOnlinePlayerNames() {
-        getServer().getScheduler().runTaskAsynchronously(this, () -> {
-            try (Jedis j = getJedisPool().getResource()) {
-                onlinePlayers = j.lrange("players", 0, -1);
-            }
-        });
-        return onlinePlayers;
-    }
-
-    public void registerChannelListeners() {
-        new Thread(() -> {
-            try (Jedis listener = jedisPool.getResource()) {
-                listener.subscribe(new FriendRequestListener(), "friend.request");
-            }
-        }, "redisListener").start();
     }
 
     public void logPlayer(Player player) {
@@ -182,23 +126,26 @@ public class CorePlugin extends JavaPlugin {
         });
     }
 
-    public CompletableFuture<Document> findPlayer(UUID uuid) {
-        CompletableFuture<Document> promise = new CompletableFuture<>();
+    public void applyPermissions(Player player, Rank rank) {
+        PermissionAttachment attachment = player.addAttachment(this);
+        for (String perm : rank.getPermissions()) {
+            attachment.setPermission(perm, true);
+        }
 
-        getPlayerCollection().find(eq("uuid", uuid.toString())).first((d, throwable) -> {
-            if (throwable != null) {
-                System.err.println(throwable.toString());
-            } else {
-                promise.complete(d);
+        for (String rankName : rank.getInherits()) {
+            Rank r = getServerConfig().getRankByName(rankName);
+            if (r != null) {
+                for (String p : r.getPermissions()) {
+                    attachment.setPermission(p, true);
+                }
             }
-        });
-        return promise;
+        }
+        perms.put(player.getUniqueId(), attachment);
     }
 
-    public boolean isPlayerOnNetwork(String name) {
-        return getOnlinePlayerNames().contains(name);
+    public CorePlayer getPlayer(UUID uuid) {
+        return (CorePlayer) API.getUserManager().findByUniqueId(uuid);
     }
-
     public boolean isGameServer() {
         return getServer().getPluginManager().isPluginEnabled("ConquestGames");
     }

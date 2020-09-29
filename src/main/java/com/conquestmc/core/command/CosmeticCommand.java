@@ -1,15 +1,20 @@
 package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
-import com.conquestmc.core.model.ConquestPlayer;
-import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
+import com.conquestmc.foundation.CorePlayer;
+import com.conquestmc.foundation.player.FProfile;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ethan Borawski
@@ -33,13 +38,26 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
 
-        ConquestPlayer targetPlayer = plugin.getPlayer(target.getUniqueId());
-        if (targetPlayer.getCosmetics().contains(cosmeticName)) {
+        CorePlayer targetPlayer = plugin.getPlayer(target.getUniqueId());
+        FProfile cosmeticProfile = targetPlayer.getProfile("cosmetics");
+
+        if (cosmeticProfile == null) {
+            cosmeticProfile = new FProfile("cosmetics", Maps.newHashMap());
+            cosmeticProfile.set("unlockedCosmetics", new ArrayList<String>());
+        }
+
+        List<String> unlockedCosmetics = (List<String>) cosmeticProfile.getObject("unlockedCosmetics");
+
+
+        if (unlockedCosmetics.contains(cosmeticName)) {
             sender.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&cThe player already has this cosmetic!"));
             return true;
         }
 
-        targetPlayer.unlockCosmetic(cosmeticName);
+        unlockedCosmetics.add(cosmeticName);
+        cosmeticProfile.set("unlockedCosmetics", unlockedCosmetics);
+        targetPlayer.update();
+
         target.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&7You now have &d" + cosmeticName));
         sender.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&7Awarded &d" + cosmeticName + " &7to &d" + targetName + ""));
 

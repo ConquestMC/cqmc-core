@@ -1,0 +1,121 @@
+{
+  "ranks": [
+    {
+      "name": "none",
+      "prefix": "",
+      "inherits": [],
+      "permissions": [
+        "group.none"
+      ]
+    },
+    {
+      "name": "knight",
+      "prefix": "&bKnight",
+      "inherits": [
+        "none"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "duke",
+      "prefix": "&aDuke",
+      "inherits": [
+        "knight"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "lord",
+      "prefix": "&dLord",
+      "inherits": [
+        "duke"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "king",
+      "prefix": "&6King",
+      "inherits": [
+        "lord"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "emperor",
+      "prefix": "&6&lEmperor",
+      "inherits": [
+        "king"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "media",
+      "prefix": "&5&lMedia",
+      "inherits": [
+        "emperor"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "trial",
+      "prefix": "&3&lTrial",
+      "inherits": [
+        "none"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "mod",
+      "prefix": "&2&lMod",
+      "inherits": [
+        "trial"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "srmod",
+      "prefix": "&2&kSrMod",
+      "inherits": [
+        "mod"
+      ],
+      "permissions": [
+        "staff.punish"
+      ]
+    },
+    {
+      "name": "admin",
+      "prefix": "&c&lAdmin",
+      "inherits": [
+        "srmod"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "Manager",
+      "prefix": "&4&lManager",
+      "inherits": [
+        "none"
+      ],
+      "permissions": [
+        "manager.setrank"
+      ]
+    },
+    {
+      "name": "dev",
+      "prefix": "&5&lDev",
+      "inherits": [
+        "manager"
+      ],
+      "permissions": []
+    },
+    {
+      "name": "owner",
+      "prefix": "&4&lOwner",
+      "inherits": [
+        "dev",
+        "emperor"
+      ],
+      "permissions": []
+    }
+  ]
+}
