@@ -100,7 +100,7 @@ public class PlayerListener implements Listener {
         username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color(cosmetic.getString("nameColor") + name))
                 .append("\n")
                 .append("\n")
-                .append(ChatUtil.color("&6&lRank " + rank.getPrefix()))
+                .append(ChatUtil.color("&6&lRank " + (rank.getName().equalsIgnoreCase("none") ? "None" : rank.getPrefix())))
                 .append("\n")
                 .append(ChatUtil.color("&6&lCurrency"))
                 .append("\n")
