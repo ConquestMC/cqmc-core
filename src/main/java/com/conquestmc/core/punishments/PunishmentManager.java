@@ -1,13 +1,12 @@
 package com.conquestmc.core.punishments;
 
-import com.conquestmc.core.model.ConquestPlayer;
 import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
+import com.conquestmc.foundation.CorePlayer;
 import com.google.common.collect.Lists;
-import com.mongodb.async.SingleResultCallback;
-import com.mongodb.async.client.MongoCollection;
-import com.mongodb.async.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.lang.WordUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -43,18 +42,18 @@ public class PunishmentManager {
             //BAN so kick them.
             punish.kickPlayer(ServerMessages.PUNISH_PREFIX.getPrefix() + ChatUtil.color("&cYou have been banned for a &4" + WordUtils.capitalizeFully(type.name()) + " &coffence!"));
         }
-        this.punishmentCollection.insertOne(p.getDBObject(), new SingleResultCallback<Void>() {
+        /*this.punishmentCollection.insertOne(p.getDBObject(), new SingleResultCallback<Void>() {
             @Override
             public void onResult(Void aVoid, Throwable throwable) {
                 ServerManager.log("&aCompleted task"); //TODO remove if not needed
             }
-        });
+        });*/
     }
 
     public List<Punishment> getPunishmentHistory(UUID uuid) {
         List<Punishment> history = Lists.newArrayList();
         CompletableFuture<List<Punishment>> future = new CompletableFuture<>();
-        punishmentCollection.find().forEach(document -> history.add(new Punishment(document)), (aVoid, throwable) -> future.complete(history));
+        //punishmentCollection.find().forEach(document -> history.add(new Punishment(document)), (aVoid, throwable) -> future.complete(history));
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -63,8 +62,8 @@ public class PunishmentManager {
         return Lists.newArrayList();
     }
 
-    public List<Punishment> getPunishmentHistory(ConquestPlayer player) {
-        return getPunishmentHistory(player.getUuid());
+    public List<Punishment> getPunishmentHistory(CorePlayer player) {
+        return getPunishmentHistory(player.getUUID());
     }
 
     public boolean isMuted(UUID uuid) {

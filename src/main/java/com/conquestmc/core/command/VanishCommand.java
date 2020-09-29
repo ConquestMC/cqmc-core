@@ -4,6 +4,9 @@ import com.conquestmc.core.CorePlugin;
 import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
+import com.conquestmc.foundation.API;
+import com.conquestmc.foundation.CorePlayer;
+import com.conquestmc.foundation.player.FProfile;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,9 +34,9 @@ public class VanishCommand implements CommandExecutor {
             return true;
         }
 
-        plugin.getPlayerManager().getOrInitPromise(sender.getUniqueId()).whenComplete(((conquestPlayer, throwable) -> {
-            conquestPlayer.getPlayerSettings().put("vanished", true);
-        }));
+        CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(sender.getUniqueId());
+        FProfile settings = player.getProfile("settings");
+        settings.set("vanished", true);
 
         sender.sendMessage(ServerMessages.VANISH_PREFIX.getPrefix() + ChatUtil.color("&f&l*POOF* &ayou have been vanished!"));
         return false;

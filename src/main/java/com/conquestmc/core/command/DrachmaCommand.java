@@ -1,10 +1,11 @@
 package com.conquestmc.core.command;
 
 import com.conquestmc.core.CorePlugin;
-import com.conquestmc.core.model.ConquestPlayer;
-import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.core.server.ServerMessages;
 import com.conquestmc.core.util.ChatUtil;
+import com.conquestmc.foundation.API;
+import com.conquestmc.foundation.CorePlayer;
+import com.conquestmc.foundation.player.FProfile;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -43,18 +44,19 @@ public class DrachmaCommand implements CommandExecutor {
             }
 
             Player pl = Bukkit.getPlayer(userName);
-            ConquestPlayer cp = plugin.getPlayer(pl.getUniqueId());
+            CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(pl.getUniqueId());
+            FProfile coreProfile = player.getProfile("core");
 
             if (action.equalsIgnoreCase("set")) {
-                cp.setCoins(amount);
+                coreProfile.set("drachma", amount);
             } else if (action.equalsIgnoreCase("give")) {
-                cp.setCoins(cp.getCoins() + amount);
+                coreProfile.set("drachma", coreProfile.getInteger("drachma") + amount);
             } else if (action.equalsIgnoreCase("take")) {
-                cp.setCoins(cp.getCoins() - amount);
+                coreProfile.set("drachma", coreProfile.getInteger("drachma") - amount);
             } else {
                 return true;
             }
-            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + cp.getCoins()));
+            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + coreProfile.getInteger("drachma")));
         } else {
             commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&c/drachma set|give|take user amount"));
             return true;
