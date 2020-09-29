@@ -50,6 +50,7 @@ public class ProfileDefaultListener implements Listener {
             cosmeticProfile.set("unlockedTrails", new ArrayList<>());
             cosmeticProfile.set("unlockedGadgets", new ArrayList<>());
             cosmeticProfile.set("unlockedCages", new ArrayList<>());
+            cosmeticProfile.set("nameColor", "&7");
             corePlayer.getAllProfiles().add(cosmeticProfile);
         }
     }
