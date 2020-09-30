@@ -1,6 +1,9 @@
 package com.conquestmc.core;
 
 import com.conquestmc.core.command.*;
+import com.conquestmc.core.command.framework.CCommand;
+import com.conquestmc.core.command.framework.CommandInfo;
+import com.conquestmc.core.command.framework.CommandPreProcess;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
 import com.conquestmc.core.listener.PlayerListener;
@@ -51,6 +54,9 @@ public class CorePlugin extends JavaPlugin {
 
     private PunishmentManager punishmentManager;
 
+    @Getter
+    private Map<String, CCommand> commandMap = Maps.newHashMap();
+
     /*
             <aesthetic-update changelist> <2020/09/21>
 
@@ -95,6 +101,8 @@ public class CorePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         //getServer().getPluginManager().registerEvents(new PunishmentListener(punishmentManager), this);
         getServer().getPluginManager().registerEvents(new SignListener(), this);
+
+        getServer().getPluginManager().registerEvents(new CommandPreProcess(), this);
         ServerManager.log("&aSuccessfully registered listeners");
     }
 
@@ -107,6 +115,8 @@ public class CorePlugin extends JavaPlugin {
         getCommand("drachma").setExecutor(new DrachmaCommand(this));
         getCommand("speed").setExecutor(new SpeedCommand());
         getCommand("setrank").setExecutor(new RankCommand(this));
+
+        register(TestCommand.class);
         ServerManager.log("&aSuccessfully registered commands");
     }
 
@@ -141,6 +151,19 @@ public class CorePlugin extends JavaPlugin {
             }
         }
         perms.put(player.getUniqueId(), attachment);
+    }
+
+    public void register(Class<? extends CCommand> c) {
+        CommandInfo info = c.getAnnotation(CommandInfo.class);
+        if (info == null)
+            return;
+
+        try {
+            commandMap.put(info.name(), c.newInstance());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public CorePlayer getPlayer(UUID uuid) {
