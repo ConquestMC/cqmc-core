@@ -40,9 +40,9 @@ public class ProfileDefaultListener implements Listener {
 
         if (gameProfile == null) {
             gameProfile = new FProfile("game", Maps.newHashMap());
-            gameProfile.set("kills", 0);
-            gameProfile.set("deaths", 0);
-            gameProfile.set("wins", 0);
+            gameProfile.set("kills", (int)0);
+            gameProfile.set("deaths", (int)0);
+            gameProfile.set("wins", (int)0);
             corePlayer.getAllProfiles().add(gameProfile);
         }
         if (cosmeticProfile == null) {
