@@ -1,6 +1,7 @@
 package com.conquestmc.core.listener;
 
 import com.conquestmc.core.CorePlugin;
+import com.conquestmc.core.bossbar.BossBarManager;
 import com.conquestmc.core.model.Rank;
 import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.foundation.API;
@@ -132,6 +133,7 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         event.setJoinMessage("");
+        plugin.getBossBarManager().showBossBar(p);
 
         //this is where we need to do some work
         CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(p.getUniqueId());
@@ -226,5 +228,10 @@ public class PlayerListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.getBossBarManager().removeBar(event.getPlayer());
     }
 }
