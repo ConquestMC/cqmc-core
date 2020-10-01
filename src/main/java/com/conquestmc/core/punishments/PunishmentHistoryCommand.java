@@ -50,9 +50,9 @@ public class PunishmentHistoryCommand implements CommandExecutor {
                     if (p.getType() == PunishmentType.GAMEPLAY) {
                         mat = Material.ANVIL;
                     } else if (p.getType() == PunishmentType.HACKING) {
-                        mat = Material.GOLD_SWORD;
+                        mat = Material.LEGACY_GOLD_SWORD;
                     } else if (p.getType() == PunishmentType.CHAT) {
-                        mat = Material.BOOK_AND_QUILL;
+                        mat = Material.LEGACY_BOOK_AND_QUILL;
                     } else {
                         mat = Material.PAPER;
                     }

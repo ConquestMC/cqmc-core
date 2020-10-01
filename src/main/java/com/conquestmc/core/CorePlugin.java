@@ -1,5 +1,6 @@
 package com.conquestmc.core;
 
+import com.conquestmc.core.bossbar.BossBarManager;
 import com.conquestmc.core.command.*;
 import com.conquestmc.core.command.framework.CCommand;
 import com.conquestmc.core.command.framework.CommandInfo;
@@ -22,6 +23,7 @@ import com.google.common.collect.Maps;
 import com.mongodb.client.MongoClients;
 import lombok.Getter;
 import org.bson.Document;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,9 +34,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public class CorePlugin extends JavaPlugin {
 
@@ -57,6 +56,8 @@ public class CorePlugin extends JavaPlugin {
     @Getter
     private Map<String, CCommand> commandMap = Maps.newHashMap();
 
+    private BossBarManager bossBarManager;
+
     /*
             <aesthetic-update changelist> <2020/09/21>
 
@@ -78,7 +79,6 @@ public class CorePlugin extends JavaPlugin {
         instance = this;
         serverConfigManager.init();
         this.serverConfig = serverConfigManager.getConfig();
-
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(128);
         this.jedisPool = new JedisPool(config);
@@ -89,6 +89,8 @@ public class CorePlugin extends JavaPlugin {
 
         registerListeners();
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
+        this.bossBarManager = new BossBarManager(ChatColor.GOLD + "play.conquest-mc.com");
     }
 
     @Override
@@ -164,6 +166,10 @@ public class CorePlugin extends JavaPlugin {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public BossBarManager getBossBarManager() {
+        return bossBarManager;
     }
 
     public CorePlayer getPlayer(UUID uuid) {
