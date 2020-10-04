@@ -18,6 +18,7 @@ import com.conquestmc.core.punishments.PunishmentManager;
 import com.conquestmc.core.server.ServerManager;
 import com.conquestmc.foundation.API;
 import com.conquestmc.foundation.CorePlayer;
+import com.conquestmc.foundation.player.FProfile;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mongodb.client.MongoClients;
@@ -90,7 +91,7 @@ public class CorePlugin extends JavaPlugin {
         registerListeners();
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
-        this.bossBarManager = new BossBarManager(ChatColor.GOLD + "play.conquest-mc.com");
+        this.bossBarManager = new BossBarManager(40, ChatColor.GOLD + "play.conquest-mc.com", ChatColor.GREEN + "More marketing here");
     }
 
     @Override
@@ -122,35 +123,33 @@ public class CorePlugin extends JavaPlugin {
         ServerManager.log("&aSuccessfully registered commands");
     }
 
-    public void logPlayer(Player player) {
-        getServer().getScheduler().runTaskAsynchronously(this, () -> {
-            try (Jedis j = getJedisPool().getResource()) {
-                j.lpush("players", player.getName());
-            }
-        });
-    }
-
-    public void remPlayer(Player player) {
-        getServer().getScheduler().runTaskAsynchronously(this, () -> {
-            try (Jedis j = getJedisPool().getResource()) {
-                j.lrem("players", 1, player.getName());
-            }
-        });
-    }
-
     public void applyPermissions(Player player, Rank rank) {
+        CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByUniqueId(player.getUniqueId());
+
+        List<String> permissions = corePlayer.getPermissions();
+
         PermissionAttachment attachment = player.addAttachment(this);
+
+
         for (String perm : rank.getPermissions()) {
-            attachment.setPermission(perm, true);
+            if (!permissions.contains(perm)) {
+                permissions.add(perm);
+            }
         }
 
         for (String rankName : rank.getInherits()) {
             Rank r = getServerConfig().getRankByName(rankName);
             if (r != null) {
                 for (String p : r.getPermissions()) {
-                    attachment.setPermission(p, true);
+                    if (!permissions.contains(p)) {
+                        permissions.add(p);
+                    }
                 }
             }
+        }
+
+        for (String perm : permissions) {
+            attachment.setPermission(perm, true);
         }
         perms.put(player.getUniqueId(), attachment);
     }

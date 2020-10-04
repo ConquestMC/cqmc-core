@@ -40,7 +40,7 @@ public class BossBar1_8 extends BossBar {
     }
 
     public void removePlayer(Player p) {
-        EntityWither wither = withers.remove(p);
+        EntityWither wither = withers.remove(p.getUniqueId());
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(new int[] {wither.getId()});
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
     }
@@ -86,5 +86,11 @@ public class BossBar1_8 extends BossBar {
     @Override
     public void remove(Player player) {
         removePlayer(player);
+    }
+
+    @Override
+    public void setText(String text) {
+        super.setText(text);
+        setTitle(text);
     }
 }
