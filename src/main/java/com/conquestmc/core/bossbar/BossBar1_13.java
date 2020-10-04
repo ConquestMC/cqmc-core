@@ -24,4 +24,10 @@ public class BossBar1_13 extends BossBar {
     public void remove(Player player) {
         bar.removePlayer(player);
     }
+
+    @Override
+    public void setText(String text) {
+        super.setText(text);
+        bar.setTitle(text);
+    }
 }
