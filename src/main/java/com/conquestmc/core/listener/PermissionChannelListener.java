@@ -9,8 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.io.ByteArrayInputStream;
-
 public class PermissionChannelListener implements PluginMessageListener {
 
 
@@ -44,6 +42,23 @@ public class PermissionChannelListener implements PluginMessageListener {
 
                     if (target.isOnline()) {
                         CorePlugin.getInstance().addPermission(target, perm);
+                        System.out.println("Added permission, and value is: " + player.hasPermission(perm));
+                    }
+                }
+            }
+            else if (sub.equalsIgnoreCase("remove")) {
+                CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByName(user);
+                if (corePlayer == null)
+                    return;
+
+                if (corePlayer.isOnline()) {
+                    //recalc
+                    Player target = Bukkit.getPlayer(user);
+                    if (target == null)
+                        return;
+
+                    if (target.isOnline()) {
+                        CorePlugin.getInstance().removePermission(target, perm);
                         System.out.println("Added permission, and value is: " + player.hasPermission(perm));
                     }
                 }

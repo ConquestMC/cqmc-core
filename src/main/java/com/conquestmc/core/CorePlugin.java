@@ -1,5 +1,6 @@
 package com.conquestmc.core;
 
+import com.conquestmc.core.achievement.RxAchievement;
 import com.conquestmc.core.bossbar.BossBarManager;
 import com.conquestmc.core.command.*;
 import com.conquestmc.core.command.framework.CCommand;
@@ -60,6 +61,9 @@ public class CorePlugin extends JavaPlugin {
 
     private BossBarManager bossBarManager;
 
+    @Getter
+    private RxAchievement rxRegister;
+
     /*
             <aesthetic-update changelist> <2020/09/21>
 
@@ -94,6 +98,7 @@ public class CorePlugin extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, "permissions:main", new PermissionChannelListener());
 
         this.bossBarManager = new BossBarManager(40, ChatColor.GOLD + "play.conquest-mc.com", ChatColor.GREEN + "More marketing here");
+        rxRegister = new RxAchievement(this);
     }
 
     @Override
@@ -127,6 +132,10 @@ public class CorePlugin extends JavaPlugin {
 
     public void addPermission(Player player, String perm) {
         this.getPerms().get(player.getUniqueId()).setPermission(perm, true);
+    }
+
+    public void removePermission(Player player, String perm) {
+        this.getPerms().get(player.getUniqueId()).setPermission(perm, false);
     }
 
     public void applyPermissions(Player player, Rank rank) {
