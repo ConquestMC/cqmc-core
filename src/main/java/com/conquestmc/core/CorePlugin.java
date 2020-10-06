@@ -1,5 +1,6 @@
 package com.conquestmc.core;
 
+import com.conquestmc.core.achievement.RxAchievement;
 import com.conquestmc.core.bossbar.BossBarManager;
 import com.conquestmc.core.command.*;
 import com.conquestmc.core.command.framework.CCommand;
@@ -7,6 +8,7 @@ import com.conquestmc.core.command.framework.CommandInfo;
 import com.conquestmc.core.command.framework.CommandPreProcess;
 import com.conquestmc.core.config.ConfigManager;
 import com.conquestmc.core.config.MainConfig;
+import com.conquestmc.core.listener.PermissionChannelListener;
 import com.conquestmc.core.listener.PlayerListener;
 import com.conquestmc.core.listener.ProfileDefaultListener;
 import com.conquestmc.core.listener.SignListener;
@@ -59,6 +61,9 @@ public class CorePlugin extends JavaPlugin {
 
     private BossBarManager bossBarManager;
 
+    @Getter
+    private RxAchievement rxRegister;
+
     /*
             <aesthetic-update changelist> <2020/09/21>
 
@@ -90,8 +95,10 @@ public class CorePlugin extends JavaPlugin {
 
         registerListeners();
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "permissions:main", new PermissionChannelListener());
 
         this.bossBarManager = new BossBarManager(40, ChatColor.GOLD + "play.conquest-mc.com", ChatColor.GREEN + "More marketing here");
+        rxRegister = new RxAchievement(this);
     }
 
     @Override
@@ -123,12 +130,19 @@ public class CorePlugin extends JavaPlugin {
         ServerManager.log("&aSuccessfully registered commands");
     }
 
+    public void addPermission(Player player, String perm) {
+        this.getPerms().get(player.getUniqueId()).setPermission(perm, true);
+    }
+
+    public void removePermission(Player player, String perm) {
+        this.getPerms().get(player.getUniqueId()).setPermission(perm, false);
+    }
+
     public void applyPermissions(Player player, Rank rank) {
         CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByUniqueId(player.getUniqueId());
 
         List<String> permissions = corePlayer.getPermissions();
-
-        PermissionAttachment attachment = player.addAttachment(this);
+        PermissionAttachment attachment = perms.getOrDefault(player.getUniqueId(), player.addAttachment(this));
 
 
         for (String perm : rank.getPermissions()) {
