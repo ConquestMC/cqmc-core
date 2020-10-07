@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +72,11 @@ public class ProfileDefaultListener implements Listener {
             gameProfile.set("wins", (int)0);
             corePlayer.getAllProfiles().add(gameProfile);
         }
+        gameProfile.addDefault("kd", (double) 0.00);
+        gameProfile.addDefault("winRatio", (double) 0.00);
+        gameProfile.addDefault("topThree", (int) 0);
+
+
         if (cosmeticProfile == null) {
             cosmeticProfile = new FProfile("cosmetics", Maps.newHashMap());
             cosmeticProfile.set("unlockedTrails", new ArrayList<>());
