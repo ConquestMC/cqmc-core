@@ -3,6 +3,7 @@ package com.conquestmc.core.listener;
 import com.conquestmc.foundation.API;
 import com.conquestmc.foundation.CorePlayer;
 import com.conquestmc.foundation.player.FProfile;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,6 +24,11 @@ public class ProfileDefaultListener implements Listener {
         FProfile coreProfile = corePlayer.getProfile("core");
         FProfile permissions = corePlayer.getProfile("permissions");
         FProfile cosmeticProfile = corePlayer.getProfile("cosmetics");
+        FProfile friendsProfile = corePlayer.getProfile("friends");
+
+        if (friendsProfile == null) {
+            friendsProfile = new FProfile("friends", Maps.newHashMap());
+        }
 
         if (coreProfile == null) {
             coreProfile = new FProfile("core", Maps.newHashMap());
@@ -54,5 +60,9 @@ public class ProfileDefaultListener implements Listener {
             cosmeticProfile.set("nameColor", "&7");
             corePlayer.getAllProfiles().add(cosmeticProfile);
         }
+
+        friendsProfile.addDefault("friendsList", Lists.newArrayList());
+        friendsProfile.addDefault("outgoingRequests", Lists.newArrayList());
+        friendsProfile.addDefault("incomingRequests", Lists.newArrayList());
     }
 }
