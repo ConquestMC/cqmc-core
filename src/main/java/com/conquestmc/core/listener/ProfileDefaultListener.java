@@ -1,5 +1,6 @@
 package com.conquestmc.core.listener;
 
+import com.conquestmc.core.util.ChatUtil;
 import com.conquestmc.foundation.API;
 import com.conquestmc.foundation.CorePlayer;
 import com.conquestmc.foundation.player.FProfile;
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ProfileDefaultListener implements Listener {
@@ -37,6 +39,23 @@ public class ProfileDefaultListener implements Listener {
             coreProfile.set("friends", new ArrayList<String>());
             corePlayer.getAllProfiles().add(coreProfile);
         }
+        /*
+        if (coreProfile == null) {
+            coreProfile = new FProfile("core", Maps.newHashMap());
+            coreProfile.set("drachma", 0.0);
+            coreProfile.set("points", 0.0);
+            coreProfile.set("friends", new ArrayList<String>());
+            coreProfile.set("lastLogin", ChatUtil.formatDate.format(new Date()));
+            coreProfile.set("firstJoin", ChatUtil.formatDate.format(new Date()));
+            coreProfile.set("playtime", (long) 0);
+            coreProfile.set("ignoredPlayers", new ArrayList<String>());
+            corePlayer.getAllProfiles().add(coreProfile);
+         */
+
+        coreProfile.addDefault("lastLogin", ChatUtil.formatDate.format(new Date()));
+        coreProfile.addDefault("firstJoin", ChatUtil.formatDate.format(new Date()));
+        coreProfile.addDefault("playtime", (long) 0);
+        coreProfile.addDefault("ignoredPlayers", new ArrayList<String>());
 
         if (permissions == null) {
             permissions = new FProfile("permissions", Maps.newHashMap());
@@ -60,6 +79,8 @@ public class ProfileDefaultListener implements Listener {
             cosmeticProfile.set("nameColor", "&7");
             corePlayer.getAllProfiles().add(cosmeticProfile);
         }
+        cosmeticProfile.addDefault("unlockedArrowTrails", new ArrayList<>());
+        cosmeticProfile.addDefault("unlockedInteractionEvents", new ArrayList<>());
 
         friendsProfile.addDefault("friendsList", Lists.newArrayList());
         friendsProfile.addDefault("outgoingRequests", Lists.newArrayList());

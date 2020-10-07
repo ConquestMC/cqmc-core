@@ -1,14 +1,22 @@
 package com.conquestmc.core.util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import java.text.SimpleDateFormat;
 
 public class ChatUtil {
     private final static int CENTER_PX = 154;
+    public static SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     public static String color(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
+
+    public static void clearPlayerChat(Player p) {
+        for (int i = 0; i < 100; i++) p.sendMessage(" ");
+    }
     public static String getCenteredChatMessage(String message) {
         if (message == null || message.equals("")) ;
         message = ChatUtil.color(message);
