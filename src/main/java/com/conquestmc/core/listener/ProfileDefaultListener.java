@@ -23,6 +23,7 @@ public class ProfileDefaultListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player pl = event.getPlayer();
         CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByUniqueId(pl.getUniqueId());
+        corePlayer.update();
 
         FProfile coreProfile = corePlayer.getProfile("core");
         FProfile permissions = corePlayer.getProfile("permissions");
@@ -67,14 +68,14 @@ public class ProfileDefaultListener implements Listener {
 
         if (gameProfile == null) {
             gameProfile = new FProfile("game", Maps.newHashMap());
-            gameProfile.set("kills", (int)0);
-            gameProfile.set("deaths", (int)0);
-            gameProfile.set("wins", (int)0);
+            gameProfile.set("kills", 0);
+            gameProfile.set("deaths", 0);
+            gameProfile.set("wins", 0);
             corePlayer.getAllProfiles().add(gameProfile);
         }
-        gameProfile.addDefault("kd", (double) 0.00);
-        gameProfile.addDefault("winRatio", (double) 0.00);
-        gameProfile.addDefault("topThree", (int) 0);
+        gameProfile.addDefault("kd", 0.00);
+        gameProfile.addDefault("winRatio", 0.00);
+        gameProfile.addDefault("topThree", 0);
 
 
         if (cosmeticProfile == null) {
