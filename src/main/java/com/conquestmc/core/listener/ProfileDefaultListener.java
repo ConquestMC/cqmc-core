@@ -73,8 +73,8 @@ public class ProfileDefaultListener implements Listener {
             gameProfile.set("wins", 0);
             corePlayer.getAllProfiles().add(gameProfile);
         }
-        gameProfile.addDefault("kd", 0.00);
-        gameProfile.addDefault("winRatio", 0.00);
+        gameProfile.addDefault("kd", 0);
+        gameProfile.addDefault("winRatio", 0);
         gameProfile.addDefault("topThree", 0);
 
 
