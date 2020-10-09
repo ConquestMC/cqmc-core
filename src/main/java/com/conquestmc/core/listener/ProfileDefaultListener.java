@@ -41,23 +41,20 @@ public class ProfileDefaultListener implements Listener {
             coreProfile.set("friends", new ArrayList<String>());
             corePlayer.getAllProfiles().add(coreProfile);
         }
-        /*
-        if (coreProfile == null) {
-            coreProfile = new FProfile("core", Maps.newHashMap());
-            coreProfile.set("drachma", 0.0);
-            coreProfile.set("points", 0.0);
-            coreProfile.set("friends", new ArrayList<String>());
-            coreProfile.set("lastLogin", ChatUtil.formatDate.format(new Date()));
-            coreProfile.set("firstJoin", ChatUtil.formatDate.format(new Date()));
-            coreProfile.set("playtime", (long) 0);
-            coreProfile.set("ignoredPlayers", new ArrayList<String>());
-            corePlayer.getAllProfiles().add(coreProfile);
-         */
-
         coreProfile.addDefault("lastLogin", ChatUtil.formatDate.format(new Date()));
         coreProfile.addDefault("firstJoin", ChatUtil.formatDate.format(new Date()));
         coreProfile.addDefault("playtime", (long) 0);
         coreProfile.addDefault("ignoredPlayers", new ArrayList<String>());
+        coreProfile.addDefault("drachmaLifetimeEarnings", 0);
+        coreProfile.addDefault("drachmaSeasonEarnings", 0);
+        coreProfile.addDefault("drachmaDailyEarnings", 0);
+        coreProfile.addDefault("drachmaSpent", 0);
+        coreProfile.addDefault("trophiesEarned", 0);
+        coreProfile.addDefault("pointsAwarded", 0);
+        coreProfile.addDefault("pointsDeducted", 0);
+        coreProfile.addDefault("pointsLargestDeduction", 0);
+        coreProfile.addDefault("pointsLargestAward", 0);
+
 
         if (permissions == null) {
             permissions = new FProfile("permissions", Maps.newHashMap());
@@ -76,6 +73,17 @@ public class ProfileDefaultListener implements Listener {
         gameProfile.addDefault("kd", 0.0);
         gameProfile.addDefault("winRatio", 0.0);
         gameProfile.addDefault("topThree", 0);
+        gameProfile.addDefault("topTen", 0);
+        gameProfile.addDefault("gamesParticipated", 0);
+        gameProfile.addDefault("gamesDNF", 0);
+        gameProfile.addDefault("chestsLooted", 0);
+        gameProfile.addDefault("currentWinStreak", 0);
+        gameProfile.addDefault("longestWinStreak", 0);
+        gameProfile.addDefault("averagePlacement", 0);
+        gameProfile.addDefault("currentKillStreak", 0);
+        gameProfile.addDefault("highestKillStreak", 0);
+        gameProfile.addDefault("combatLog", 0);
+        gameProfile.addDefault("suicides", 0);
 
 
         if (cosmeticProfile == null) {
