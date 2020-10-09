@@ -4,6 +4,24 @@ All notable changes to the entire Conquest MC project will be documented in this
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [2.1.5] - 2020-10-08
+ 
+### Added
+- [LOBBY](https://github.com/ConquestMC/cqmc-lobby)
+ PATCH More holograms
+- [CORE](https://github.com/ConquestMC/cqmc-core)
+ PATCH Added 10-15 statistics
+- [BUNGEE](https://github.com/ConquestMC/cqmc-bungee)
+ MINOR Dynamic help menus
+### Changed
+- [CORE](https://github.com/ConquestMC/cqmc-core)
+ PATCH Improved trophy system
+### Fixed
+- [LOBBY](https://github.com/ConquestMC/cqmc-lobby)
+ PATCH Tablist bug fix
+- [FOUNDATION](https://github.com/ConquestMC/foundation)
+ PATCH corePlayer getInteger/getDouble bug fix
  
 ## [2.0.0] - 2020-09-30
  
@@ -31,7 +49,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  MINOR Updated all server holograms
 - [LOBBY](https://github.com/ConquestMC/cqmc-lobby)
  MINOR Updated player profile & hub hotbar
- 
 ### Fixed
 - [LOBBY](https://github.com/ConquestMC/cqmc-lobby)
  PATCH Many small bug fixes
