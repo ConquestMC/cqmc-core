@@ -172,7 +172,7 @@ public class PlayerListener implements Listener {
 
         plugin.applyPermissions(p, rank);
 
-        p.setPlayerListName(ChatUtil.color(rank.getPrefix() + " " + nameColor + p.getName() + "   "));
+        p.setPlayerListName(ChatUtil.color(rank.getPrefix() + nameColor + p.getName() + "   "));
         if (rank.getPermissions().contains("rank.staff")) {
             Bukkit.broadcastMessage(ChatUtil.color(joinMessages[0]
                     .replace("{rank}", rank.getPrefix())
