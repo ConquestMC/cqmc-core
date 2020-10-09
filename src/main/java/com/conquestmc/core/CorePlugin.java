@@ -83,6 +83,7 @@ public class CorePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        serverConfigManager.setOverwrite(true);
         serverConfigManager.init();
         this.serverConfig = serverConfigManager.getConfig();
         JedisPoolConfig config = new JedisPoolConfig();

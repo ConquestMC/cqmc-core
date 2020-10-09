@@ -18,6 +18,8 @@ public class ConfigManager<T> {
     private Gson gson;
     private String directory;
 
+    private boolean overwrite = false;
+
     @Getter
     private T config;
 
@@ -35,7 +37,7 @@ public class ConfigManager<T> {
             f.mkdir();
         }
         File file = new File("plugins/" + directory + "/" + fileName);
-        if (!file.exists()) {
+        if (!file.exists() || overwrite) {
             URL url = plugin.getClass().getResource("/" + fileName);
             try {
                 System.out.println("[CQMC-CORE] COPYING DEFAULT CONFIG: " + fileName); //todo remove statement if not needed, document code instead
@@ -68,5 +70,9 @@ public class ConfigManager<T> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
     }
 }
