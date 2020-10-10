@@ -133,6 +133,10 @@ public class CorePlugin extends JavaPlugin {
 
     public void addPermission(Player player, String perm) {
         this.getPerms().get(player.getUniqueId()).setPermission(perm, true);
+        CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByUniqueId(player.getUniqueId());
+        corePlayer.givePermission(perm);
+        FProfile perms = corePlayer.getProfile("permissions");
+        perms.set("permissionList", corePlayer.getPermissions());
     }
 
     public void removePermission(Player player, String perm) {
@@ -167,6 +171,8 @@ public class CorePlugin extends JavaPlugin {
             attachment.setPermission(perm, true);
         }
         perms.put(player.getUniqueId(), attachment);
+        FProfile perms = corePlayer.getProfile("permissions");
+        perms.set("permissionList", permissions);
     }
 
     public void register(Class<? extends CCommand> c) {
