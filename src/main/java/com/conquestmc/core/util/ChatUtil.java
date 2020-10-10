@@ -13,7 +13,6 @@ public class ChatUtil {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
-
     public static void clearPlayerChat(Player p) {
         for (int i = 0; i < 100; i++) p.sendMessage(" ");
     }
