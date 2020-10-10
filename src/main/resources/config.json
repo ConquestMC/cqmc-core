@@ -15,7 +15,8 @@
       "name": "knight",
       "prefix": "&bKnight",
       "inherits": [
-        "none"
+        "none",
+        "rank.donor"
       ],
       "permissions": []
     },
@@ -63,7 +64,7 @@
       "name": "trial",
       "prefix": "&3&lTrial",
       "inherits": [
-        "none"
+        "none",
       ],
       "permissions": [
         "staff.rank"

@@ -14,7 +14,9 @@
       "inherits": [
         "none"
       ],
-      "permissions": []
+      "permissions": [
+        "rank.donor"
+      ]
     },
     {
       "name": "duke",
@@ -63,7 +65,8 @@
         "none"
       ],
       "permissions": [
-        "staff.supportchat"
+        "staff.supportchat",
+        "rank.staff"
       ]
     },
     {
