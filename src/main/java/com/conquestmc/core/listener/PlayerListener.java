@@ -24,10 +24,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.*;
 
 public class PlayerListener implements Listener {
 
@@ -43,44 +43,6 @@ public class PlayerListener implements Listener {
     public PlayerListener(CorePlugin plugin) {
         this.plugin = plugin;
     }
-
-    /*@EventHandler
-    public void onLogin(AsyncPlayerPreLoginEvent event) {
-        UUID uuid = event.getUniqueId();
-
-        int slept = 0;
-        while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), "online") != 1 && slept < 15) {
-            try {
-                Thread.sleep(10);
-                slept++;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (slept == 15) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatUtil.color(ServerMessages.SERVER_PREFIX.getPrefix() + "&cCould not load player data! Contact an administrator."));
-            return;
-        }
-
-        /*while (plugin.getJedisPool().getResource().setnx("status." + uuid.toString(), ) != 1) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        plugin.getPlayerManager().getOrInitPromise(uuid).whenComplete(((conquestPlayer, throwable) -> {
-            if (throwable != null) {
-                System.err.println(throwable);
-                return;
-            }
-            System.out.println(conquestPlayer.getBukkitPlayer().getName() + " Joined with rank: " + conquestPlayer.getPrefixedRank().getPrefix()); //todo proper logging system
-        }));
-        Bukkit.getPluginManager().callEvent(new PlayerLoadedEvent(plugin.getPlayer(uuid)));
-    }*/
-
     public TextComponent getChatFormat(CorePlayer player, String name, String message) {
 
         FProfile permProfile = player.getProfile("permissions");
@@ -89,15 +51,15 @@ public class PlayerListener implements Listener {
         FProfile cosmetic = player.getProfile("cosmetics");
         FProfile core = player.getProfile("core");
 
-        String p = rank.getName().equalsIgnoreCase("none") ? "" : rank.getPrefix();
+        //String p = rank.getName().equalsIgnoreCase("none") ? "" : rank.getPrefix();
 
 
-        TextComponent prefix = new TextComponent(ChatUtil.color(p));
+        TextComponent prefix = new TextComponent(rank.getName().equalsIgnoreCase("none") ? "" : ChatUtil.color(rank.getPrefix()));
         TextComponent username = new TextComponent(ChatUtil.color(" " + cosmetic.getString("nameColor") + name));
         TextComponent split = new TextComponent(" | ");
         TextComponent msg = new TextComponent(ChatUtil.color(permProfile.getString("rank").equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
 
-        prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(rank.getPrefix() + "\n" + getStaffOnHover(player)).create()));
+        prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color(rank.getPrefix()) + "\n" + getStaffOnHover(player)).create()));
         username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color(cosmetic.getString("nameColor") + name))
                 .append("\n")
                 .append("\n")
@@ -105,12 +67,12 @@ public class PlayerListener implements Listener {
                 .append("\n")
                 .append(ChatUtil.color("&6&lCurrency"))
                 .append("\n")
-                .append(ChatUtil.color("  &6⇾ &eDrachma: &f" + core.getDouble("drachma")))
+                .append(ChatUtil.color("  &6⇾ &eDrachma: &f" + core.getInteger("drachma")))
                 .append("\n")
-                .append(ChatUtil.color("  &6⇾ &eConquest Points: &f" + core.getDouble("points")))
+                .append(ChatUtil.color("  &6⇾ &eConquest Points: &f" + core.getInteger("points")))
                 .append("\n")
-                .append(ChatUtil.color("&6&lFriends " + ((List<String>) core.getObject("friends")).size()))
-                .append("\n")
+                .append(ChatUtil.color("&6&lFriends &f" + ((List<String>) core.getObject("friends")).size()))
+                .append("\n\n")
                 .append((ChatUtil.color("&2&l☛ &a&lClick to view profile &2&l☚"))).create()));
         split.setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
         return new TextComponent(prefix, username, split, msg);
@@ -120,9 +82,9 @@ public class PlayerListener implements Listener {
         FProfile permProfile = player.getProfile("permissions");
         Rank rank = plugin.getServerConfig().getRankByName(permProfile.getString("rank"));
 
-        if (rank.getPermissions().contains("staff.rank")) {
+        if (player.isStaff()) {
             return ChatUtil.color("&6Staff");
-        } else if (rank.getPermissions().contains("donator.rank")) {
+        } else if (player.isDonor()) {
             return ChatUtil.color("&5Donor");
         } else {
             return ChatUtil.color("&7Default");
@@ -132,6 +94,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+        ChatUtil.clearPlayerChat(p);
         event.setJoinMessage("");
         plugin.getBossBarManager().showBossBar(p);
 
@@ -145,7 +108,6 @@ public class PlayerListener implements Listener {
         new BukkitRunnable() {
             public void run() {
                 CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(p.getUniqueId());
-                System.out.println("player is " + (player == null));
             }
         }.runTaskLater(plugin, 2L);
 
@@ -172,7 +134,15 @@ public class PlayerListener implements Listener {
 
         plugin.applyPermissions(p, rank);
 
-        p.setPlayerListName(ChatUtil.color(rank.getPrefix() + nameColor + p.getName() + "   "));
+        FProfile coreProfile = player.getProfile("core");
+        coreProfile.set("lastLogin", ChatUtil.formatDate.format(new Date().getTime()));
+        player.update();
+        if (rank.getName().equalsIgnoreCase("none")) {
+            p.setPlayerListName(ChatUtil.color(nameColor + p.getName() + "   "));
+        } else {
+            p.setPlayerListName(ChatUtil.color(rank.getPrefix() +" " + nameColor + p.getName() + "   "));
+        }
+
         if (rank.getPermissions().contains("rank.staff")) {
             Bukkit.broadcastMessage(ChatUtil.color(joinMessages[0]
                     .replace("{rank}", rank.getPrefix())
@@ -231,7 +201,21 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        plugin.getBossBarManager().removeBar(event.getPlayer());
+    public void onQuit(PlayerQuitEvent e) {
+        CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByUniqueId(e.getPlayer().getUniqueId());
+        FProfile coreProfile = corePlayer.getProfile("core");
+        try {
+            String loggedOutAt = ChatUtil.formatDate.format(new Date().getTime());
+            Date d1 = ChatUtil.formatDate.parse(coreProfile.getString("lastLogin"));
+            Date d2 = ChatUtil.formatDate.parse(loggedOutAt);
+
+            long diff = d2.getTime() - d1.getTime(); //Milliseconds
+            long seconds = diff / 1000 % 60; //Seconds
+
+            coreProfile.set("playtime", coreProfile.getLong("playtime") + seconds);
+        } catch (ParseException parseException) {
+            parseException.printStackTrace();
+        }
+        plugin.getBossBarManager().removeBar(e.getPlayer());
     }
 }
