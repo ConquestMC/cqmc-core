@@ -32,12 +32,12 @@ public class CustomItemStack {
 
     public CustomItemStack() {
         this.name = "";
-        this.lore = new ArrayList<String>();
+        this.lore = new ArrayList<>();
         this.material = Material.DIAMOND;
         this.data = 0;
         this.size = 1;
-        this.enchantments = new HashMap<Enchantment, Integer>();
-        this.flags = new ArrayList<ItemFlag>();
+        this.enchantments = new HashMap<>();
+        this.flags = new ArrayList<>();
     }
 
     public CustomItemStack(ItemStack is) {
