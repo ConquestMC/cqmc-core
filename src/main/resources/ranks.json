@@ -66,7 +66,8 @@
       ],
       "permissions": [
         "staff.supportchat",
-        "rank.staff"
+        "rank.staff",
+        "group.trial"
       ]
     },
     {
@@ -75,7 +76,9 @@
       "inherits": [
         "trial"
       ],
-      "permissions": []
+      "permissions": [
+        "group.mod"
+      ]
     },
     {
       "name": "srmod",
@@ -84,7 +87,8 @@
         "mod"
       ],
       "permissions": [
-        "staff.punish"
+        "staff.punish",
+        "group.srmod"
       ]
     },
     {
@@ -93,7 +97,9 @@
       "inherits": [
         "srmod"
       ],
-      "permissions": []
+      "permissions": [
+        "group.admin"
+      ]
     },
     {
       "name": "Manager",
@@ -102,7 +108,8 @@
         "none"
       ],
       "permissions": [
-        "manager.setrank"
+        "manager.setrank",
+        "group.manager"
       ]
     },
     {
@@ -111,7 +118,9 @@
       "inherits": [
         "manager"
       ],
-      "permissions": []
+      "permissions": [
+        "group.dev"
+      ]
     },
     {
       "name": "owner",
@@ -120,7 +129,9 @@
         "dev",
         "emperor"
       ],
-      "permissions": []
+      "permissions": [
+        "group.owner"
+      ]
     }
   ]
 }
