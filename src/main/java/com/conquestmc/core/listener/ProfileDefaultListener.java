@@ -45,6 +45,7 @@ public class ProfileDefaultListener implements Listener {
         coreProfile.addDefault("firstJoin", ChatUtil.formatDate.format(new Date()));
         coreProfile.addDefault("playtime", (long) 0);
         coreProfile.addDefault("ignoredPlayers", new ArrayList<String>());
+        coreProfile.addDefault("dailyRewardStreak", 0);
         coreProfile.addDefault("drachmaLifetimeEarnings", 0);
         coreProfile.addDefault("drachmaSeasonEarnings", 0);
         coreProfile.addDefault("drachmaDailyEarnings", 0);
