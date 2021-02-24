@@ -39,13 +39,13 @@ public class RankCommand implements CommandExecutor {
         }
 
         CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByName(targetName);
-        FProfile permissions = corePlayer.getProfile("permissions");
-        if (permissions.getString("rank").equalsIgnoreCase(rankName)) {
+        FProfile mainProfile = corePlayer.getProfile("main");
+        if (mainProfile.getString("rank").equalsIgnoreCase(rankName)) {
             commandSender.sendMessage(ChatColor.RED + "This user already has this rank!");
             return true;
         }
 
-        permissions.set("rank", rankName);
+        mainProfile.set("rank", rankName);
         plugin.applyPermissions(Bukkit.getPlayer(targetName), plugin.getServerConfig().getRankByName(rankName));
         corePlayer.update();
 

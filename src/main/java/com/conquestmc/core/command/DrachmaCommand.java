@@ -45,18 +45,18 @@ public class DrachmaCommand implements CommandExecutor {
 
             Player pl = Bukkit.getPlayer(userName);
             CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(pl.getUniqueId());
-            FProfile coreProfile = player.getProfile("core");
+            FProfile mainProfile = player.getProfile("main");
 
             if (action.equalsIgnoreCase("set")) {
-                coreProfile.set("drachma", amount);
+                mainProfile.set("drachma", amount);
             } else if (action.equalsIgnoreCase("give")) {
-                coreProfile.set("drachma", coreProfile.getInteger("drachma") + amount);
+                mainProfile.set("drachma", mainProfile.getInteger("drachma") + amount);
             } else if (action.equalsIgnoreCase("take")) {
-                coreProfile.set("drachma", coreProfile.getInteger("drachma") - amount);
+                mainProfile.set("drachma", mainProfile.getInteger("drachma") - amount);
             } else {
                 return true;
             }
-            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + coreProfile.getInteger("drachma")));
+            commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&aChanged &b" + userName + "&a's balance to: &e" + mainProfile.getInteger("drachma")));
         } else {
             commandSender.sendMessage(ServerMessages.SERVER_PREFIX.getPrefix() + ChatUtil.color("&c/drachma set|give|take user amount"));
             return true;

@@ -45,33 +45,30 @@ public class PlayerListener implements Listener {
     }
     public TextComponent getChatFormat(CorePlayer player, String name, String message) {
 
-        FProfile permProfile = player.getProfile("permissions");
-        Rank rank = plugin.getServerConfig().getRankByName(permProfile.getString("rank"));
-
-        FProfile cosmetic = player.getProfile("cosmetics");
-        FProfile core = player.getProfile("core");
+        FProfile mainProfile = player.getProfile("main");
+        Rank rank = plugin.getServerConfig().getRankByName(mainProfile.getString("rank"));
 
         //String p = rank.getName().equalsIgnoreCase("none") ? "" : rank.getPrefix();
 
 
         TextComponent prefix = new TextComponent(rank.getName().equalsIgnoreCase("none") ? "" : ChatUtil.color(rank.getPrefix()));
-        TextComponent username = new TextComponent(ChatUtil.color(" " + cosmetic.getString("nameColor") + name));
+        TextComponent username = new TextComponent(ChatUtil.color(" " + mainProfile.getString("nameColor") + name));
         TextComponent split = new TextComponent(" | ");
-        TextComponent msg = new TextComponent(ChatUtil.color(permProfile.getString("rank").equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
+        TextComponent msg = new TextComponent(ChatUtil.color(mainProfile.getString("rank").equalsIgnoreCase("none") ? ChatColor.GRAY + message : ChatColor.WHITE + message));
 
         prefix.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color(rank.getPrefix()) + "\n" + getStaffOnHover(player)).create()));
-        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color(cosmetic.getString("nameColor") + name))
+        username.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtil.color(mainProfile.getString("nameColor") + name))
                 .append("\n")
                 .append("\n")
                 .append(ChatUtil.color("&6&lRank " + (rank.getName().equalsIgnoreCase("none") ? "None" : rank.getPrefix())))
                 .append("\n")
                 .append(ChatUtil.color("&6&lCurrency"))
                 .append("\n")
-                .append(ChatUtil.color("  &6⇾ &eDrachma: &f" + core.getInteger("drachma")))
+                .append(ChatUtil.color("  &6⇾ &eDrachma: &f" + mainProfile.getInteger("drachma")))
                 .append("\n")
-                .append(ChatUtil.color("  &6⇾ &eConquest Points: &f" + core.getInteger("points")))
+                .append(ChatUtil.color("  &6⇾ &eConquest Points: &f" + mainProfile.getInteger("points")))
                 .append("\n")
-                .append(ChatUtil.color("&6&lFriends &f" + ((List<String>) core.getObject("friends")).size()))
+                .append(ChatUtil.color("&6&lFriends &f" + ((List<String>) mainProfile.getObject("friends")).size()))
                 .append("\n\n")
                 .append((ChatUtil.color("&2&l☛ &a&lClick to view profile &2&l☚"))).create()));
         split.setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
@@ -79,7 +76,7 @@ public class PlayerListener implements Listener {
     }
 
     private String getStaffOnHover(CorePlayer player) {
-        FProfile permProfile = player.getProfile("permissions");
+        FProfile permProfile = player.getProfile("main");
         Rank rank = plugin.getServerConfig().getRankByName(permProfile.getString("rank"));
 
         if (player.isStaff()) {
@@ -111,31 +108,13 @@ public class PlayerListener implements Listener {
             }
         }.runTaskLater(plugin, 2L);
 
-        if (player.getProfile("cosmetics") == null) {
-            FProfile cosmetics = new FProfile("cosmetics", Maps.newHashMap());
-            cosmetics.set("unlockedCosmetics", new ArrayList<String>());
-            cosmetics.set("nameColor", "&7");
+        FProfile mainProfile = player.getProfile("main");
 
-            player.getAllProfiles().add(cosmetics);
-        }
-
-        if (player.getProfile("permissions") == null) {
-            FProfile perms = new FProfile("permissions", Maps.newHashMap());
-            perms.set("rank", "none");
-            perms.set("permissions", new ArrayList<String>());
-            player.getAllProfiles().add(perms);
-        }
-
-        FProfile profile = player.getProfile("permissions");
-
-        Rank rank = plugin.getServerConfig().getRankByName(profile.getString("rank"));
-        FProfile cosmetics = player.getProfile("cosmetics");
-        String nameColor = cosmetics.getString("nameColor");
+        Rank rank = plugin.getServerConfig().getRankByName(mainProfile.getString("rank"));
+        String nameColor = mainProfile.getString("nameColor");
 
         plugin.applyPermissions(p, rank);
-
-        FProfile coreProfile = player.getProfile("core");
-        coreProfile.set("lastLogin", ChatUtil.formatDate.format(new Date().getTime()));
+        mainProfile.set("lastLogin", ChatUtil.formatDate.format(new Date().getTime()));
         player.update();
         if (rank.getName().equalsIgnoreCase("none")) {
             p.setPlayerListName(ChatUtil.color(nameColor + p.getName() + "   "));
@@ -184,14 +163,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onVanishJoin(PlayerJoinEvent event) {
         CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(event.getPlayer().getUniqueId());
-        FProfile permProfile = player.getProfile("settings");
+        FProfile mainProfile = player.getProfile("main");
 
-        if (permProfile == null) {
-            permProfile = new FProfile("settings", Maps.newHashMap());
-            permProfile.set("vanished", false);
-        }
-
-        if (permProfile.getBoolean("vanished")) {
+        if (mainProfile.getBoolean("vanished")) {
             for (Player pl : Bukkit.getOnlinePlayers()) {
                 if (!pl.hasPermission("group.admin")) {
                     pl.hidePlayer(event.getPlayer());
@@ -203,16 +177,16 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         CorePlayer corePlayer = (CorePlayer) API.getUserManager().findByUniqueId(e.getPlayer().getUniqueId());
-        FProfile coreProfile = corePlayer.getProfile("core");
+        FProfile mainProfile = corePlayer.getProfile("main");
         try {
             String loggedOutAt = ChatUtil.formatDate.format(new Date().getTime());
-            Date d1 = ChatUtil.formatDate.parse(coreProfile.getString("lastLogin"));
+            Date d1 = ChatUtil.formatDate.parse(mainProfile.getString("lastLogin"));
             Date d2 = ChatUtil.formatDate.parse(loggedOutAt);
 
             long diff = d2.getTime() - d1.getTime(); //Milliseconds
             long seconds = diff / 1000 % 60; //Seconds
 
-            coreProfile.set("playtime", coreProfile.getLong("playtime") + seconds);
+            mainProfile.set("playtime", mainProfile.getLong("playtime") + seconds);
         } catch (ParseException parseException) {
             parseException.printStackTrace();
         }

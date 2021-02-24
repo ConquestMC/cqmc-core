@@ -21,10 +21,6 @@ public class CustomSkullStack extends CustomItemStack {
         this.url = url;
         return this;
     }
-    public CustomSkullStack withDisplayName(String name) {
-        this.displayName = name;
-        return this;
-    }
 
     public CustomSkullStack withOwner(String owner) {
         this.owner = owner;

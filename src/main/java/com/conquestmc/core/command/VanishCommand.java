@@ -35,8 +35,8 @@ public class VanishCommand implements CommandExecutor {
         }
 
         CorePlayer player = (CorePlayer) API.getUserManager().findByUniqueId(sender.getUniqueId());
-        FProfile settings = player.getProfile("settings");
-        settings.set("vanished", true);
+        FProfile mainProfile = player.getProfile("main");
+        mainProfile.set("vanished", true);
 
         sender.sendMessage(ServerMessages.VANISH_PREFIX.getPrefix() + ChatUtil.color("&f&l*POOF* &ayou have been vanished!"));
         return false;

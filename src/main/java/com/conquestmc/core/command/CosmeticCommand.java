@@ -39,14 +39,9 @@ public class CosmeticCommand implements CommandExecutor {
         }
 
         CorePlayer targetPlayer = plugin.getPlayer(target.getUniqueId());
-        FProfile cosmeticProfile = targetPlayer.getProfile("cosmetics");
+        FProfile mainProfile = targetPlayer.getProfile("main");
 
-        if (cosmeticProfile == null) {
-            cosmeticProfile = new FProfile("cosmetics", Maps.newHashMap());
-            cosmeticProfile.set("unlockedCosmetics", new ArrayList<String>());
-        }
-
-        List<String> unlockedCosmetics = (List<String>) cosmeticProfile.getObject("unlockedCosmetics");
+        List<String> unlockedCosmetics = (List<String>) mainProfile.getObject("unlockedCosmetics");
 
 
         if (unlockedCosmetics.contains(cosmeticName)) {
@@ -55,7 +50,7 @@ public class CosmeticCommand implements CommandExecutor {
         }
 
         unlockedCosmetics.add(cosmeticName);
-        cosmeticProfile.set("unlockedCosmetics", unlockedCosmetics);
+        mainProfile.set("unlockedCosmetics", unlockedCosmetics);
         targetPlayer.update();
 
         target.sendMessage(ServerMessages.FRIENDS_PREFIX.getPrefix() + ChatUtil.color("&7You now have &d" + cosmeticName));
